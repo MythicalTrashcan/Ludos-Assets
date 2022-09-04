@@ -1,2 +1,3 @@
-# stard-projects
-all the projects I found/made
+# stard
+## projects
+All my projects I found/made in a website.
