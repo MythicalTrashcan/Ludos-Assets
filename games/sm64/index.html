@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <link type="image/png" rel="shortcut icon" href="./favicon.png" />
+    <title>Mario 64 | Ludos</title>
+    <style>
+      body,
+      html {
+        background-color: #000000;
+        image-rendering: pixelated;
+        scrollbar-width: none;
+      }
+      ::-webkit-scrollbar {
+        display: none;
+      }
+      canvas {
+        width: 100vw;
+        height: 100vh;
+      }
+      p {
+        margin-top: -15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container text-light" id="controls">
+      <figure>
+        <blockquote class="blockquote">
+          <h1 class="display-6"><strong>Keyboard Controls</strong></h1>
+        </blockquote>
+        <figcaption class="blockquote-footer">
+          You can use a controller!
+          Unsure which ones are supported.
+        </figcaption>
+        <figcaption class="blockquote-footer">
+          You can save! Save is stored in local storage.
+          Can be accessed in Dev tools and in application tab. You can save this in-case of cookie resets.
+        </figcaption>
+        <figcaption class="blockquote-footer">
+          Press page down or scroll down to hide these instructions.
+        </figcaption>
+        <figcaption class="blockquote-footer">
+          Press page up or scroll up to see them again. (may not scroll up if fullscreen mode is enabled)
+        </figcaption>
+        <figcaption class="blockquote-footer">
+          Sound may not work on chromium-based browsers without Sound permissions set to "Allow".
+        </figcaption>
+        <ul>
+          <p>
+            You can enable sound by default if you click on the button next to the url bar.
+          </p>
+          <p>
+            Click on site settings and look for the Sound permission.
+          </p>
+          <p>
+            Set that to "Allow" instead of "Automatic" and the sound will be enabled.
+          </p>
+        </ul>
+        <h3>
+          Visual Steps Below
+        </h3>
+        <img src="./images/1.png" />
+        <br>
+        <br>
+        <img src="./images/2.png" />
+        <br>
+        <br>
+        <img src="./images/3.png" />
+      <table class="table table-sm text-light" id="keyboard">
+        <thead>
+          <th scope="col">GameCube-Controller</th>
+          <th scope="col">Keyboard</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A</td>
+            <td>X</td>
+          </tr>
+          <tr>
+            <td>B</td>
+            <td>C</td>
+          </tr>
+          <tr>
+            <td>L</td>
+            <td>Q</td>
+          </tr>
+          <tr>
+            <td>Z</td>
+            <td>Space</td>
+          </tr>
+          <tr>
+            <td>Start</td>
+            <td>Enter</td>
+          </tr>
+          <tr>
+            <td>C-Stick</td>
+            <td>WASD</td>
+          </tr>
+          <tr>
+            <td>Movement</td>
+            <td>Arrow Keys</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="container">
+      <canvas class="emscripten" id="canvas"></canvas>
+    </div>
+    <script type="text/javascript">
+        var Module = {
+          preRun: [],
+          postRun: [],
+          print: (function () {
+            return function (text) {
+              if (arguments.length > 1)
+                text = Array.prototype.slice.call(arguments).join(" ");
+              console.log(text);
+            };
+          })(),
+          printErr: function (text) {
+            if (arguments.length > 1)
+              text = Array.prototype.slice.call(arguments).join(" ");
+            console.error(text);
+          },
+          canvas: (function () {
+            var canvas = document.getElementById("canvas");
+            canvas.width = window.innerWidth; // Todo: how to do this from c++
+            canvas.height = window.innerHeight;
+            canvas.addEventListener(
+              "webglcontextlost",
+              function (e) {
+                alert("WebGL context lost. You will need to reload the page.");
+                e.preventDefault();
+              },
+              false
+            );
+            return canvas;
+          })(),
+          setStatus: function (text) {},
+        };
+    </script>
+    <script async type="text/javascript" src="sm64.us.f3dex2e.js"></script>
+  </body>
+</html>
