@@ -169,6 +169,16 @@
 
       function exportSave() {
         document.getElementById('saveFileField').textContent = localStorage.getItem('sm64_save_file');
+        let saveFileField = document.getElementById("saveFileField");
+        
+        timeout = setTimeout(copyAlert, 250);
+
+        function copyAlert() {
+          alert("Code copied to clipboard. Please save this in a file to use it again later");
+        }
+
+        saveFileField.select();
+        document.execCommand("copy");
       }
 
       function importSave() {
