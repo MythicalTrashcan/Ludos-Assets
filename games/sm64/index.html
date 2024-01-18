@@ -108,6 +108,15 @@
           </tr>
         </tbody>
       </table>
+      <button onclick="exportSave()">
+        Copy Save State Code
+      </button>
+      <button onclick="importSave()">
+        Load Save State Code
+      </button>
+      <br>
+      <textarea id="saveFileField" style="width: 100%; height: 250px;">
+      </textarea>
     </div>
     <div id="container">
       <canvas class="emscripten" id="canvas"></canvas>
@@ -153,6 +162,15 @@
 
       function changeTitle() {
         document.title = "Mario 64 | Ludos";
+      }
+
+      function exportSave() {
+        document.getElementById('saveFileField').textContent = localStorage.getItem('sm64_save_file');
+      }
+
+      function importSave() {
+        var saveValue = prompt("Enter save state code:");
+        localStorage.setItem('sm64_save_file', saveValue);
       }
     </script>
   </body>
