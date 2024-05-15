@@ -519,38 +519,6 @@ summary {
     border-radius: 5px;
 }
 
-/* keeps 4 columns at 1440px */
-/* @media (1500px <= width < 1950px) {
-    .experiment-grid-module, .choose-grid-module, .pause-grid-module {
-        line-height: 150%;
-        font-size: 0.72em;
-    }
-    #experiment-grid, #choose-grid, .pause-grid{
-        grid-template-columns: repeat(auto-fit, 360px);
-    }
-    .card-background{
-        height:315px;
-    }
-    .card-text {
-        min-height: 82px;
-    }
-}
-@media (width < 1500px) {
-    .experiment-grid-module, .choose-grid-module, .pause-grid-module {
-        line-height: 143%;
-        font-size: 0.68em;
-    }
-    #experiment-grid, #choose-grid, .pause-grid{
-        grid-template-columns: repeat(auto-fit, 340px);
-    }
-    .card-background{
-        height:290px; 
-    }
-    .card-text {
-        min-height: 75px;
-    }
-} */
-
 .experiment-grid-module:hover .card-text {
     background-color: var(--hover-card-color);
 }
@@ -695,77 +663,6 @@ summary {
     display: none;
 }
 
-/* #damage-bar {
-    position: absolute;
-    top: 0px;
-    left: 15px;
-    height: 6px;
-    width: 0px;
-    transition: width 0.3s linear;
-    opacity: 1;
-    z-index: 2;
-    pointer-events: none;
-    background-color: #f03;
-    border: 1px solid #701;
-    display: none;
-}
-
-#defense-bar {
-    position: absolute;
-    top: 9px;
-    left: 15px;
-    height: 5px;
-    width: 0px;
-    transition: width 0.3s linear;
-    opacity: 1;
-    z-index: 2;
-    pointer-events: none;
-    background-color: #fff;
-    border: 1px solid #333;
-    display: none;
-}
-#health {
-    position: absolute;
-    top: 16px;
-    left: 15px;
-    height: 20px;
-    width: 0px;
-    transition: width 1s ease-out;    z-index: 2;
-    pointer-events: none;
-    background-color: #0fa;
-    border: 2px solid rgb(51, 162, 125);
-    border-radius: 8px;
-    display: none;
-}
-#health-bg {
-    position: absolute;
-    top: 18px;
-    left: 15px;
-    height: 20px;
-    width: 0px;
-    transition: width 1s ease-out;
-    background-color: #000;
-    opacity: 0.1;
-    z-index: 1;
-    pointer-events: none;
-    border-radius: 8px;
-    display: none;
-} */
-
-/* .low-health {
-    animation: blink 250ms infinite alternate;
-}
-
-@keyframes blink {
-    from {
-        opacity: 1;
-    }
-
-    to {
-        opacity: 0.6;
-    }
-} */
-
 /* background on title page */
 #fade-out {
     position: absolute;
@@ -847,13 +744,6 @@ summary {
     user-select: none;
 }
 
-/* color for in game console output */
-/* .ammo-flash {
-    color: #f33;
-    transition: color 2s;
-} */
-
-
 .color-text {
     color: #000;
 }
@@ -920,10 +810,71 @@ summary {
     color: #356;
 }
 
+.color-choice {
+    display: inline-block;
+}
+
+.color-choice span {
+    display: inline-block;
+    animation: bounce 3s infinite;
+    transform-origin: bottom;
+    color: #555;
+}
+
+.color-choice span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.color-choice span:nth-child(2) {
+    animation-delay: 1s;
+}
+
+.color-choice span:nth-child(3) {
+    animation-delay: 2s;
+}
+
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+
+    15% {
+        transform: translateY(-2px);
+        color: #aaa;
+    }
+
+    30% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.color-invulnerable {
+    color: #fff;
+    text-shadow: 0px 0px 7px #000;
+}
+
+.color-MACHO {
+    color: #246;
+    text-shadow: 0px 0px 7px #246;
+}
+
 .color-dup {
     font-variant: small-caps;
     letter-spacing: 1px;
     text-shadow: 1.5px -1.5px hsla(243, 100%, 38%, 0.2);
+}
+
+.color-remove {
+    text-decoration: line-through;
+    /* letter-spacing: 2px; */
+    border-radius: 3px;
+    padding: 0px 3px;
+    background-color: hsl(255, 40%, 71%);
+    color: #fff;
 }
 
 .color-cloaked {
@@ -1028,6 +979,16 @@ summary {
     margin-bottom: -0.3em;
 }
 
+.circle-grid-instant {
+    width: 1.1em;
+    height: 1.1em;
+    border-radius: 50%;
+    border: 0.15em solid hsl(255, 100%, 71%);
+    display: inline-block;
+    margin-bottom: -0.35em;
+    /* background-color: hsla(255, 100%, 71%, 0.3); */
+}
+
 .circle-grid-skin {
     width: 1.25em;
     height: 1.25em;
@@ -1090,7 +1051,7 @@ summary {
     background-color: #0d9;
     border: 0.05em #fff solid;
     opacity: 0.85;
-    margin-bottom: -3px;
+    margin-bottom: -2px;
 }
 
 .heal-circle-energy {
@@ -1101,7 +1062,7 @@ summary {
     background-color: #ff0;
     border: 0.05em #000 solid;
     opacity: 0.85;
-    margin-bottom: -3px;
+    margin-bottom: -2px;
 }
 
 .coupling-circle {
@@ -1153,6 +1114,44 @@ summary {
 
 .research {
     background-color: #f7b;
+}
+
+.color-speed {
+    display: inline-block;
+    transform: skew(-27deg);
+    /* font-weight: 400; */
+    color: #038;
+}
+
+.color-randomize {
+    display: inline-block;
+    animation: randomize 4s linear infinite alternate;
+    transform-origin: bottom;
+    color: #555;
+}
+
+@keyframes randomize {
+
+    0%,
+    100% {
+        font-family: Arial;
+    }
+
+    20% {
+        font-family: Times New Roman;
+    }
+
+    40% {
+        font-family: Verdana;
+    }
+
+    60% {
+        font-family: Georgia;
+    }
+
+    80% {
+        font-family: Courier New;
+    }
 }
 
 .alt {
@@ -1264,7 +1263,7 @@ summary {
     }
 
     100% {
-        background-color: rgb(200, 255, 255)
+        background-color: rgb(0, 204, 255)
     }
 }
 
@@ -1376,4 +1375,130 @@ summary {
 
 .link:hover {
     text-decoration: underline;
+}
+
+/* 
+.fade-ins {
+    animation: 1.5s linear 1s fadeins;
+}
+
+@keyframes fadeins {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+} */
+.blurry-text {
+    color: transparent;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+.unblur {
+    color: transparent;
+    text-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+    animation: 2.5s ease 0.5s normal forwards 1 unblur;
+}
+
+@keyframes unblur {
+    0% {
+        color: transparent;
+        text-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+    }
+
+    100% {
+        /* font-weight: 800; */
+        color: #000;
+        text-shadow: 0 0 0px rgba(0, 0, 0, 0.5);
+    }
+}
+
+.fade-in {
+    opacity: 0;
+    animation: 2s ease 1.5s normal forwards 1 fadein;
+}
+
+.fade-in-fast {
+    opacity: 0;
+    animation: 1.5s ease 1s normal forwards 1 fadein;
+}
+
+.fade-in-faster {
+    opacity: 0;
+    animation: 2s ease 0.5s normal forwards 1 fadein;
+}
+
+@keyframes fadein {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes dash {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.draw-lines {
+    stroke-dasharray: 20;
+    stroke-dashoffset: 20;
+    animation: dash 2.4s ease-in forwards;
+}
+
+.draw-lines-dash {
+    stroke-dasharray: 4;
+    stroke-dashoffset: 4;
+    animation: dash 2.4s ease-in forwards;
+}
+
+.draw-lines-o {
+    stroke-dasharray: 11;
+    stroke-dashoffset: 11;
+    animation: dash 2.4s ease-in forwards;
+}
+
+.draw-lines-g {
+    stroke-dasharray: 17;
+    stroke-dashoffset: 17;
+    animation: dash 2.4s ease-in forwards;
+}
+
+.draw-lines-box-1 {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: dash 5s ease-in forwards;
+    animation-delay: 0s;
+}
+
+.draw-lines-box-2 {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: dash 2.6s ease-in forwards;
+    animation-delay: 1s;
+}
+
+.draw-lines-box-3 {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: dash 1.15s ease-in forwards;
+    animation-delay: 1.55s;
+}
+
+.draw-lines3 {
+    stroke-dasharray: 3000;
+    stroke-dashoffset: 3000;
+    animation: dash 3.1s ease-in forwards;
+}
+
+.draw-lines4 {
+    stroke-dasharray: 300;
+    stroke-dashoffset: 300;
+    animation: dash 2.5s ease-in forwards;
 }

@@ -242,7 +242,7 @@ const mobs = {
     deathCount: 0,
     mobSpawnWithHealth: 1,
     setMobSpawnHealth() {
-        mobs.mobSpawnWithHealth = 0.89 ** (tech.mobSpawnWithHealth)
+        mobs.mobSpawnWithHealth = 0.88 ** (tech.mobSpawnWithHealth)
     },
     //**********************************************************************************************
     //**********************************************************************************************
@@ -505,89 +505,48 @@ const mobs = {
                     ctx.fill();
                 }
             },
-            laser() {
-                const vertexCollision = function (v1, v1End, domain) {
-                    for (let i = 0; i < domain.length; ++i) {
-                        let vertices = domain[i].vertices;
-                        const len = vertices.length - 1;
-                        for (let j = 0; j < len; j++) {
-                            results = simulation.checkLineIntersection(v1, v1End, vertices[j], vertices[j + 1]);
-                            if (results.onLine1 && results.onLine2) {
-                                const dx = v1.x - results.x;
-                                const dy = v1.y - results.y;
-                                const dist2 = dx * dx + dy * dy;
-                                if (dist2 < best.dist2 && (!domain[i].mob || domain[i].alive)) {
-                                    best = {
-                                        x: results.x,
-                                        y: results.y,
-                                        dist2: dist2,
-                                        who: domain[i],
-                                        v1: vertices[j],
-                                        v2: vertices[j + 1]
-                                    };
-                                }
-                            }
-                        }
-                        results = simulation.checkLineIntersection(v1, v1End, vertices[0], vertices[len]);
-                        if (results.onLine1 && results.onLine2) {
-                            const dx = v1.x - results.x;
-                            const dy = v1.y - results.y;
-                            const dist2 = dx * dx + dy * dy;
-                            if (dist2 < best.dist2) {
-                                best = {
-                                    x: results.x,
-                                    y: results.y,
-                                    dist2: dist2,
-                                    who: domain[i],
-                                    v1: vertices[0],
-                                    v2: vertices[len]
-                                };
-                            }
-                        }
-                    }
-                };
-                if (this.seePlayer.recall && !this.isSlowed) {
-                    const seeRange = 2500;
-                    best = {
-                        x: null,
-                        y: null,
-                        dist2: Infinity,
-                        who: null,
-                        v1: null,
-                        v2: null
-                    };
-                    const look = {
-                        x: this.position.x + seeRange * Math.cos(this.angle),
-                        y: this.position.y + seeRange * Math.sin(this.angle)
-                    };
-                    vertexCollision(this.position, look, map);
-                    vertexCollision(this.position, look, body);
-                    if (!m.isCloak) vertexCollision(this.position, look, [player]);
-                    // hitting player
-                    if (best.who === player) {
-                        if (m.immuneCycle < m.cycle) {
-                            const dmg = 0.0014 * simulation.dmgScale;
-                            m.damage(dmg);
-                            ctx.fillStyle = "#f00"; //draw damage
-                            ctx.beginPath();
-                            ctx.arc(best.x, best.y, dmg * 10000, 0, 2 * Math.PI);
-                            ctx.fill();
-                        }
-                    }
-                    //draw beam
-                    if (best.dist2 === Infinity) {
-                        best = look;
-                    }
-                    ctx.beginPath();
-                    ctx.moveTo(this.position.x, this.position.y);
-                    ctx.lineTo(best.x, best.y);
-                    ctx.strokeStyle = "#f00"; // Purple path
-                    ctx.lineWidth = 1;
-                    ctx.setLineDash([50 + 120 * Math.random(), 50 * Math.random()]);
-                    ctx.stroke(); // Draw it
-                    ctx.setLineDash([]);
-                }
-            },
+            // laser() {
+            //     if (this.seePlayer.recall && !this.isSlowed) {
+            //         const seeRange = 2500;
+            //         best = {
+            //             x: null,
+            //             y: null,
+            //             dist2: Infinity,
+            //             who: null,
+            //             v1: null,
+            //             v2: null
+            //         };
+            //         const look = {
+            //             x: this.position.x + seeRange * Math.cos(this.angle),
+            //             y: this.position.y + seeRange * Math.sin(this.angle)
+            //         };
+            //         best = vertexCollision(this.position, look, m.isCloak ? [map, body] : [map, body, [player]]);
+
+            //         // hitting player
+            //         if (best.who === player) {
+            //             if (m.immuneCycle < m.cycle) {
+            //                 const dmg = 0.0014 * simulation.dmgScale;
+            //                 m.damage(dmg);
+            //                 ctx.fillStyle = "#f00"; //draw damage
+            //                 ctx.beginPath();
+            //                 ctx.arc(best.x, best.y, dmg * 10000, 0, 2 * Math.PI);
+            //                 ctx.fill();
+            //             }
+            //         }
+            //         //draw beam
+            //         if (best.dist2 === Infinity) {
+            //             best = look;
+            //         }
+            //         ctx.beginPath();
+            //         ctx.moveTo(this.position.x, this.position.y);
+            //         ctx.lineTo(best.x, best.y);
+            //         ctx.strokeStyle = "#f00"; // Purple path
+            //         ctx.lineWidth = 1;
+            //         ctx.setLineDash([50 + 120 * Math.random(), 50 * Math.random()]);
+            //         ctx.stroke(); // Draw it
+            //         ctx.setLineDash([]);
+            //     }
+            // },
             wing(a, radius = 250, ellipticity = 0.4, dmg = 0.0006) {
                 const minorRadius = radius * ellipticity
                 const perp = { x: Math.cos(a), y: Math.sin(a) } //
@@ -658,47 +617,6 @@ const mobs = {
                     ctx.fillStyle = "rgba(0,0,0,0.07)";
                     ctx.fill();
                     //spring to random place on map
-                    const vertexCollision = function (v1, v1End, domain) {
-                        for (let i = 0; i < domain.length; ++i) {
-                            let vertices = domain[i].vertices;
-                            const len = vertices.length - 1;
-                            for (let j = 0; j < len; j++) {
-                                results = simulation.checkLineIntersection(v1, v1End, vertices[j], vertices[j + 1]);
-                                if (results.onLine1 && results.onLine2) {
-                                    const dx = v1.x - results.x;
-                                    const dy = v1.y - results.y;
-                                    const dist2 = dx * dx + dy * dy;
-                                    if (dist2 < best.dist2 && (!domain[i].mob || domain[i].alive)) {
-                                        best = {
-                                            x: results.x,
-                                            y: results.y,
-                                            dist2: dist2,
-                                            who: domain[i],
-                                            v1: vertices[j],
-                                            v2: vertices[j + 1]
-                                        };
-                                    }
-                                }
-                            }
-                            results = simulation.checkLineIntersection(v1, v1End, vertices[0], vertices[len]);
-                            if (results.onLine1 && results.onLine2) {
-                                const dx = v1.x - results.x;
-                                const dy = v1.y - results.y;
-                                const dist2 = dx * dx + dy * dy;
-                                if (dist2 < best.dist2) {
-                                    best = {
-                                        x: results.x,
-                                        y: results.y,
-                                        dist2: dist2,
-                                        who: domain[i],
-                                        v1: vertices[0],
-                                        v2: vertices[len]
-                                    };
-                                }
-                            }
-                        }
-                    };
-                    //move to a random location
                     if (!(simulation.cycle % (this.seePlayerFreq * 4))) {
                         best = {
                             x: null,
@@ -713,8 +631,7 @@ const mobs = {
                             x: this.position.x + seeRange * Math.cos(this.angle),
                             y: this.position.y + seeRange * Math.sin(this.angle)
                         };
-                        vertexCollision(this.position, look, map);
-                        vertexCollision(this.position, look, body);
+                        best = vertexCollision(this.position, look, [map, body]);
                         if (best.dist2 != Infinity) {
                             if (Math.random() > 0.5) {
                                 this.springTarget.x = best.x;
@@ -1133,16 +1050,69 @@ const mobs = {
                 if ((!this.isShielded || isBypassShield) && this.alive) {
                     if (dmg !== Infinity) {
                         dmg *= tech.damageFromTech()
+                        if (this.isDropPowerUp) {
+                            if (this.health === 1) {
+                                if (tech.isMobFullHealthCloak) {
+                                    dmg *= 2.11
+                                    simulation.ephemera.push({
+                                        name: "damage outline",
+                                        count: 7, //cycles before it self removes
+                                        vertices: this.vertices,
+                                        do() {
+                                            this.count--
+                                            if (this.count < 0) simulation.removeEphemera(this.name)
+                                            //draw body
+                                            ctx.beginPath();
+                                            const vertices = this.vertices;
+                                            ctx.moveTo(vertices[0].x, vertices[0].y);
+                                            for (let j = 1, len = vertices.length; j < len; ++j) {
+                                                ctx.lineTo(vertices[j].x, vertices[j].y);
+                                            }
+                                            ctx.lineTo(vertices[0].x, vertices[0].y);
+                                            ctx.fillStyle = `rgba(255,0,100,0.15)` //"rgba(150,150,225,0.5)";
+                                            ctx.fill()
+                                            ctx.lineWidth = 3 //60 * (0.25 - this.damageReductionGoal)
+                                            ctx.strokeStyle = `#f08` //"rgba(150,150,225,0.5)";
+                                            ctx.stroke();
+                                        },
+                                    })
+                                }
+                            } else if (tech.isMobLowHealth && this.health < 0.25) {
+                                dmg *= 3
+
+                                simulation.ephemera.push({
+                                    name: "damage outline",
+                                    count: 2, //cycles before it self removes
+                                    vertices: this.vertices,
+                                    do() {
+                                        this.count--
+                                        if (this.count < 0) simulation.removeEphemera(this.name)
+                                        //draw body
+                                        ctx.beginPath();
+                                        const vertices = this.vertices;
+                                        ctx.moveTo(vertices[0].x, vertices[0].y);
+                                        for (let j = 1, len = vertices.length; j < len; ++j) {
+                                            ctx.lineTo(vertices[j].x, vertices[j].y);
+                                        }
+                                        ctx.lineTo(vertices[0].x, vertices[0].y);
+                                        ctx.fillStyle = `rgba(255,50,100,0.2)` //"rgba(150,150,225,0.5)";
+                                        ctx.fill()
+                                        ctx.lineWidth = 3 //60 * (0.25 - this.damageReductionGoal)
+                                        ctx.strokeStyle = `#f38` //"rgba(150,150,225,0.5)";
+                                        ctx.stroke();
+                                    },
+                                })
+                            }
+                        }
+
                         //mobs specific damage changes
                         if (tech.isFarAwayDmg) dmg *= 1 + Math.sqrt(Math.max(500, Math.min(3000, this.distanceToPlayer())) - 500) * 0.0067 //up to 33% dmg at max range of 3000
                         dmg *= this.damageReduction
                         //energy and heal drain should be calculated after damage boosts
                         if (tech.energySiphon && dmg !== Infinity && this.isDropPowerUp && m.immuneCycle < m.cycle) m.energy += Math.min(this.health, dmg) * tech.energySiphon
-                        if (tech.healthDrain && dmg !== Infinity && this.isDropPowerUp && Math.random() < tech.healthDrain * Math.min(this.health, dmg)) {
-                            powerUps.spawn(m.pos.x + 20 * (Math.random() - 0.5), m.pos.y + 20 * (Math.random() - 0.5), "heal");
-                        }
                         dmg /= Math.sqrt(this.mass)
                     }
+
                     this.health -= dmg
                     //this.fill = this.color + this.health + ')';
                     this.onDamage(dmg); //custom damage effects
@@ -1187,10 +1157,11 @@ const mobs = {
             leaveBody: true,
             isDropPowerUp: true,
             death() {
-                if (tech.collidePowerUps && Math.random() < tech.collidePowerUps && this.isDropPowerUp) powerUps.randomize(this.position) //needs to run before onDeath spawns power ups
+                if (tech.collidePowerUps && this.isDropPowerUp) powerUps.randomize(this.position) //needs to run before onDeath spawns power ups
                 this.onDeath(this); //custom death effects
                 this.removeConsBB();
                 this.alive = false; //triggers mob removal in mob[i].replace(i)
+                // console.log(this.shieldCount)
 
                 if (this.isDropPowerUp) {
                     // if (true) {
@@ -1227,6 +1198,30 @@ const mobs = {
                             });
                         }
                     }
+                    if (tech.healSpawn && Math.random() < tech.healSpawn) {
+                        powerUps.spawn(this.position.x + 20 * (Math.random() - 0.5), this.position.y + 20 * (Math.random() - 0.5), "heal");
+                        simulation.drawList.push({
+                            x: this.position.x,
+                            y: this.position.y,
+                            radius: 50,
+                            color: "#0eb",
+                            time: 12
+                        });
+                        simulation.drawList.push({
+                            x: this.position.x,
+                            y: this.position.y,
+                            radius: 100,
+                            color: "#0eb",
+                            time: 6
+                        });
+                        simulation.drawList.push({
+                            x: this.position.x,
+                            y: this.position.y,
+                            radius: 200,
+                            color: "#0eb",
+                            time: 3
+                        });
+                    }
 
                     if (tech.deathSkipTime && !m.isBodiesAsleep) {
                         requestAnimationFrame(() => {
@@ -1234,7 +1229,10 @@ const mobs = {
                             simulation.loop(); //ending with a wipe and normal loop fixes some very minor graphical issues where things are draw in the wrong locations
                         }); //wrapping in animation frame prevents errors, probably
                     }
-                    if (tech.isEnergyLoss) m.energy *= 0.8;
+                    if (tech.isEnergyLoss) {
+                        m.energy -= 0.05;
+                        if (m.energy < 0) m.energy = 0
+                    }
                     powerUps.spawnRandomPowerUp(this.position.x, this.position.y);
                     m.lastKillCycle = m.cycle; //tracks the last time a kill was made, mostly used in simulation.checks()
                     mobs.mobDeaths++
@@ -1261,25 +1259,21 @@ const mobs = {
                     }
                     if (tech.isBotSpawnerReset) {
                         for (let i = 0, len = bullet.length; i < len; i++) {
-                            if (bullet[i].botType && bullet[i].endCycle !== Infinity) bullet[i].endCycle = simulation.cycle + 780 //13 seconds
+                            if (bullet[i].botType && bullet[i].endCycle !== Infinity) bullet[i].endCycle = simulation.cycle + 900 //15 seconds
                         }
                     }
                     if (Math.random() < tech.botSpawner) {
                         b.randomBot(this.position, false)
-                        bullet[bullet.length - 1].endCycle = simulation.cycle + 780 //13 seconds
+                        bullet[bullet.length - 1].endCycle = simulation.cycle + 900 //15 seconds
                         this.leaveBody = false; // no body since it turned into the bot
                     }
+                    if (tech.isMobDeathImmunity) {
+                        const immuneTime = 360
+                        if (m.immuneCycle < m.cycle + immuneTime) m.immuneCycle = m.cycle + immuneTime; //player is immune to damage
+                    }
                     if (tech.isAddRemoveMaxHealth) {
-                        if (this.isBoss && this.isDropPowerUp) {
-                            powerUps.spawn(this.position.x + 20, this.position.y, "tech", false)
-                            powerUps.spawn(this.position.x - 20, this.position.y, "ammo", false)
-                            powerUps.spawn(this.position.x, this.position.y + 20, "research", false)
-                            powerUps.spawn(this.position.x, this.position.y - 20, "heal", false)
-                            powerUps.spawn(this.position.x - 40, this.position.y, "ammo", false)
-                            powerUps.spawn(this.position.x, this.position.y + 40, "research", false)
-                            powerUps.spawn(this.position.x, this.position.y - 40, "heal", false)
-                        } else {
-                            const amount = 0.005
+                        if (!this.isBoss) {
+                            const amount = 0.0025
                             if (tech.isEnergyHealth) {
                                 if (m.maxEnergy > amount) {
                                     tech.healMaxEnergyBonus -= amount
@@ -1292,10 +1286,10 @@ const mobs = {
                         }
                     }
                     if (tech.cloakDuplication && !this.isBoss) {
-                        tech.cloakDuplication -= 0.02
+                        tech.cloakDuplication -= 0.01
                         powerUps.setPowerUpMode(); //needed after adjusting duplication chance
                     }
-                } else if (tech.isShieldAmmo && this.shield && !this.isExtraShield) {
+                } else if (tech.isShieldAmmo && this.shield && this.shieldCount === 1) {
                     let type = tech.isEnergyNoAmmo ? "heal" : "ammo"
                     if (Math.random() < 0.4) {
                         type = "heal"

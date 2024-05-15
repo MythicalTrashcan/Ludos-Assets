@@ -109,36 +109,11 @@ function collisionChecks(event) {
                         let dmg = Math.min(Math.max(0.025 * Math.sqrt(mob[k].mass), 0.05), 0.3) * simulation.dmgScale; //player damage is capped at 0.3*dmgScale of 1.0
                         // if (m.isCloak) dmg *= 0.5
                         mob[k].foundPlayer();
-                        if (tech.isRewindAvoidDeath && (m.energy + 0.05) > Math.min(0.95, m.maxEnergy) && dmg > 0.01) { //CPT reversal runs in m.damage, but it stops the rest of the collision code here too
+                        if (tech.isRewindAvoidDeath && m.energy > 0.85 * Math.min(1, m.maxEnergy) && dmg > 0.01) { //CPT reversal runs in m.damage, but it stops the rest of the collision code here too
                             m.damage(dmg);
                             return
                         }
-                        if (tech.isFlipFlop) {
-                            if (tech.isFlipFlopOn) {
-                                tech.isFlipFlopOn = false
-                                if (document.getElementById("tech-flip-flop")) document.getElementById("tech-flip-flop").innerHTML = ` = <strong>OFF</strong>`
-                                m.eyeFillColor = 'transparent'
-                                m.damage(dmg);
-                            } else {
-                                tech.isFlipFlopOn = true //immune to damage this hit, lose immunity for next hit
-                                if (document.getElementById("tech-flip-flop")) document.getElementById("tech-flip-flop").innerHTML = ` = <strong>ON</strong>`
-                                m.eyeFillColor = m.fieldMeterColor //'#0cf'
-                                if (!tech.isFlipFlopHarm) m.damage(dmg);
-                            }
-                            if (tech.isFlipFlopHealth) {
-                                m.setMaxHealth();
-                                for (let i = 0; i < powerUp.length; i++) {
-                                    if (powerUp[i].name === "heal") {
-                                        const oldSize = powerUp[i].size
-                                        powerUp[i].size = powerUps.heal.size() //update current heals
-                                        const scale = powerUp[i].size / oldSize
-                                        Matter.Body.scale(powerUp[i], scale, scale); //grow    
-                                    }
-                                }
-                            }
-                        } else {
-                            m.damage(dmg); //normal damage
-                        }
+                        m.damage(dmg); //normal damage
 
                         if (tech.isCollisionRealitySwitch && m.alive) {
                             m.switchWorlds()
@@ -147,7 +122,7 @@ function collisionChecks(event) {
                         }
                         if (tech.isPiezo) m.energy += 20.48;
                         if (tech.isCouplingNoHit && m.coupling > 0) {
-                            m.couplingChange(-5)
+                            m.couplingChange(-4)
 
                             const unit = Vector.rotate({ x: 1, y: 0 }, 6.28 * Math.random())
                             let where = Vector.add(m.pos, Vector.mult(unit, 17))
@@ -182,27 +157,6 @@ function collisionChecks(event) {
                                 color: 'rgba(0, 171, 238, 0.7)',
                                 time: 32
                             });
-                            // simulation.drawList.push({ //add dmg to draw queue
-                            //     x: m.pos.x,
-                            //     y: m.pos.y,
-                            //     radius: 150,
-                            //     color: 'rgba(0, 171, 238, 0.33)',
-                            //     time: 6
-                            // });
-                            // simulation.drawList.push({ //add dmg to draw queue
-                            //     x: m.pos.x,
-                            //     y: m.pos.y,
-                            //     radius: 75,
-                            //     color: 'rgba(0, 171, 238, 0.5)',
-                            //     time: 16
-                            // });
-                            // simulation.drawList.push({ //add dmg to draw queue
-                            //     x: m.pos.x,
-                            //     y: m.pos.y,
-                            //     radius: 25,
-                            //     color: 'rgba(0, 171, 238, 0.75)',
-                            //     time: 25
-                            // });
                         }
                         if (tech.isHarpoonDefense) { //fire harpoons at mobs after getting hit
                             const maxCount = 10 + 3 * tech.extraHarpoons //scale the number of hooks fired
@@ -229,8 +183,8 @@ function collisionChecks(event) {
                             y: mob[k].velocity.y - 8 * Math.sin(angle)
                         });
 
-                        if (tech.isAnnihilation && !mob[k].shield && !mob[k].isShielded && !mob[k].isBoss && mob[k].isDropPowerUp && m.energy > 0.34 * m.maxEnergy && mob[k].damageReduction > 0) {
-                            m.energy -= 0.33 * Math.max(m.maxEnergy, m.energy) //0.33 * m.energy
+                        if (tech.isAnnihilation && !mob[k].shield && !mob[k].isShielded && !mob[k].isBoss && mob[k].isDropPowerUp && m.energy > 0.1 && mob[k].damageReduction > 0) {
+                            m.energy -= 0.1 //* Math.max(m.maxEnergy, m.energy) //0.33 * m.energy
                             if (m.immuneCycle === m.cycle + m.collisionImmuneCycles) m.immuneCycle = 0; //player doesn't go immune to collision damage
                             mob[k].death();
                             simulation.drawList.push({ //add dmg to draw queue
@@ -292,7 +246,7 @@ function collisionChecks(event) {
                                     }
                                 }
 
-                                let dmg = tech.blockDamage * m.dmgScale * v * obj.mass * (tech.isMobBlockFling ? 2.5 : 1) * (tech.isBlockRestitution ? 2.5 : 1) * ((m.fieldMode === 0 || m.fieldMode === 8) ? 1 + 0.04 * m.coupling : 1);
+                                let dmg = tech.blockDamage * m.dmgScale * v * obj.mass * (tech.isMobBlockFling ? 2.5 : 1) * (tech.isBlockRestitution ? 2.5 : 1) * ((m.fieldMode === 0 || m.fieldMode === 8) ? 1 + 0.05 * m.coupling : 1);
                                 if (mob[k].isShielded) dmg *= 0.7
 
                                 mob[k].damage(dmg, true);
