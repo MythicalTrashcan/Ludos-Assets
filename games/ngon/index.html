@@ -37,6 +37,24 @@
         console.log("mobile controls");
     }
     else if (isMobileControls == "false") {
+        var isConsoleControls = prompt("Would you like to enable console controls? (True/False)").toLowerCase();
+
+        if (isConsoleControls == "true") {
+            (async () => {
+                const scriptText = await (await fetch('https://raw.githubusercontent.com/kgurchiek/n-gon-controller/main/main.js')).text();
+                var script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.textContent = scriptText;
+                document.head.appendChild(script);
+            })();
+
+            console.log("console controls");
+        }
+        else {
+            alert("Input was not True or False.  Defaulting to desktop controls.");
+            console.log("desktop controls");
+        }
+
         console.log("desktop controls");
     }
     else {
