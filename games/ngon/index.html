@@ -22,6 +22,29 @@
 </head>
 
 <body>
+    <script>
+    var isMobileControls = prompt("Would you like to enable mobile controls? (True/False)").toLowerCase();
+
+    if (isMobileControls == "true") {
+        (async () => {
+            const scriptText = await (await fetch('https://raw.githubusercontent.com/kgurchiek/n-gon-mobile/main/main.js')).text();
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.textContent = scriptText;
+            document.head.appendChild(script);
+        })();
+
+        console.log("mobile controls");
+    }
+    else if (isMobileControls == "false") {
+        console.log("desktop controls");
+    }
+    else {
+        alert("Input was not True or False.  Defaulting to desktop controls.");
+        console.log("desktop controls");
+    }
+    </script>
+
     <div id='guns'></div>
     <div id='field'></div>
     <div id='tech'></div>
