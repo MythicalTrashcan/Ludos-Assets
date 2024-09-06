@@ -30,5 +30,30 @@
     </div>
     <script type="text/javascript" src="index.js"></script>
     <script type="text/javascript" src="/js/main.js"></script>
+    <script>
+
+    var alerted = localStorage.getItem('alerted') || '';
+    if (alerted != 'true') {
+      alert("Use the left and right arrow keys to increase/decrease the level.");
+     localStorage.setItem('alerted', 'true');
+    }
+
+      var currentLevel = parseInt(localStorage.getItem('core-ball-level'));
+
+      document.addEventListener('keyup', (e) => {
+
+      if (e.code === "ArrowRight" && currentLevel <= 60) {
+        localStorage.setItem('core-ball-level', currentLevel + 1);
+        window.location.reload();
+      }
+      else if (e.code === "ArrowLeft" && currentLevel > 1) {
+        localStorage.setItem('core-ball-level', currentLevel - 1);
+        window.location.reload();
+      }});
+
+      if (localStorage.getItem('core-ball-level') = null) {
+        localStorage.setItem('core-ball-level', 1);
+      }
+    </script>
   </body>
 </html>
