@@ -18,11 +18,11 @@
         <span class="title">Core Ball</span>
         <div class="button">
           <div id="txtAr">▶</div>
-          <div class="text"></div>
+          <div class="text" id="txtLevel"></div>
         </div>
         <div class="op">
           <span id="btnFW"></span>
-          <span id="btnReset"></span>
+          <span class="currentLevel" id="btnReset"></span>
           <div id="tip"></div>
         </div>
       </section>
@@ -32,27 +32,31 @@
     <script type="text/javascript" src="/js/main.js"></script>
     <script>
 
+    var currentLevel = parseInt(localStorage.getItem('core-ball-level'));
     var alerted = localStorage.getItem('alerted') || '';
     if (alerted != 'true') {
       alert("Use the left and right arrow keys to increase/decrease the level.");
      localStorage.setItem('alerted', 'true');
     }
 
-      var currentLevel = parseInt(localStorage.getItem('core-ball-level'));
-
+    while (true) {
       document.addEventListener('keyup', (e) => {
+        if (e.code === "ArrowRight" && currentLevel <= 60) {
+          localStorage.setItem('core-ball-level', currentLevel + 1);
+          currentLevel = parseInt(localStorage.getItem('core-ball-level'));
+          document.getElementById("txtLevel").innerHTML = "Level " + currentLevel;
+          window.location.reload();
+        }
+        else if (e.code === "ArrowLeft" && currentLevel > 1) {
+          localStorage.setItem('core-ball-level', currentLevel - 1);
+          currentLevel = parseInt(localStorage.getItem('core-ball-level'));
+          document.getElementById("txtLevel").innerHTML = "Level " + currentLevel;
+          window.location.reload();
+        }});
 
-      if (e.code === "ArrowRight" && currentLevel <= 60) {
-        localStorage.setItem('core-ball-level', currentLevel + 1);
-        window.location.reload();
-      }
-      else if (e.code === "ArrowLeft" && currentLevel > 1) {
-        localStorage.setItem('core-ball-level', currentLevel - 1);
-        window.location.reload();
-      }});
-
-      if (localStorage.getItem('core-ball-level') = null) {
-        localStorage.setItem('core-ball-level', 1);
+        if (localStorage.getItem('core-ball-level') = null) {
+          localStorage.setItem('core-ball-level', 1);
+        }
       }
     </script>
   </body>
