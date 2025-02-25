@@ -2,6 +2,84 @@
 //*********************************************************************
 const simulation = {
     loop() { }, //main game loop, gets set to normal or testing loop
+    // normalLoop() {
+    //     try {
+    //         simulation.gravity();
+    //         Engine.update(engine, simulation.delta);
+    //         simulation.wipe();
+    //         simulation.textLog();
+    //         if (m.onGround) {
+    //             m.groundControl()
+    //         } else {
+    //             m.airControl()
+    //         }
+    //         m.move();
+    //         m.look();
+    //         simulation.camera();
+    //         level.custom();
+    //         powerUps.do();
+    //         mobs.draw();
+    //         simulation.draw.cons();
+    //         simulation.draw.body();
+    //         if (!m.isTimeDilated) mobs.loop();
+    //         mobs.healthBar();
+    //         m.draw();
+    //         m.hold();
+    //         level.customTopLayer();
+    //         simulation.draw.drawMapPath();
+    //         b.fire();
+    //         b.bulletRemove();
+    //         b.bulletDraw();
+    //         if (!m.isTimeDilated) b.bulletDo();
+    //         simulation.drawCircle();
+    //         simulation.runEphemera();
+    //         ctx.restore();
+    //     } catch (error) {
+    //         simulation.inGameConsole(`<strong style='color:red;'>ERROR:</strong> ${(error.stack && error.stack.replace(/\n/g, "<br>")) || (error.message + ` <u>${error.filename}:${error.lineno}</u>`)}`);
+    //     } finally {
+    //         simulation.drawCursor();
+    //     }
+    // },
+    // testingLoop() {
+    //     try {
+    //         simulation.gravity();
+    //         Engine.update(engine, simulation.delta);
+    //         simulation.wipe();
+    //         simulation.textLog();
+    //         if (m.onGround) {
+    //             m.groundControl()
+    //         } else {
+    //             m.airControl()
+    //         }
+    //         m.move();
+    //         m.look();
+    //         simulation.camera();
+    //         level.custom();
+    //         m.draw();
+    //         m.hold();
+    //         level.customTopLayer();
+    //         simulation.draw.wireFrame();
+    //         if (input.fire && m.fireCDcycle < m.cycle) {
+    //             m.fireCDcycle = m.cycle + 15; //fire cooldown       
+    //             for (let i = 0, len = mob.length; i < len; i++) {
+    //                 if (Vector.magnitudeSquared(Vector.sub(mob[i].position, simulation.mouseInGame)) < mob[i].radius * mob[i].radius) {
+    //                     console.log(mob[i])
+    //                 }
+    //             }
+    //         }
+    //         simulation.draw.cons();
+    //         simulation.draw.testing();
+    //         simulation.drawCircle();
+    //         simulation.runEphemera();
+    //         simulation.constructCycle()
+    //     } catch (error) {
+    //         simulation.inGameConsole(`<strong style='color:red;'>ERROR:</strong> ${(error.stack && error.stack.replace(/\n/g, "<br>")) || (error.message + ` <u>${error.filename}:${error.lineno}</u>`)}`);
+    //     } finally {
+    //         ctx.restore();
+    //         simulation.testingOutput();
+    //         simulation.drawCursor();
+    //     }
+    // },
     normalLoop() {
         simulation.gravity();
         Engine.update(engine, simulation.delta);
@@ -20,7 +98,7 @@ const simulation = {
         mobs.draw();
         simulation.draw.cons();
         simulation.draw.body();
-        if (!m.isBodiesAsleep) mobs.loop();
+        if (!m.isTimeDilated) mobs.loop();
         mobs.healthBar();
         m.draw();
         m.hold();
@@ -29,7 +107,7 @@ const simulation = {
         b.fire();
         b.bulletRemove();
         b.bulletDraw();
-        if (!m.isBodiesAsleep) b.bulletDo();
+        if (!m.isTimeDilated) b.bulletDo();
         simulation.drawCircle();
         simulation.runEphemera();
         ctx.restore();
@@ -105,10 +183,10 @@ const simulation = {
             Engine.update(engine, simulation.delta);
             // level.custom();
             // level.customTopLayer();
-            if (!m.isBodiesAsleep) mobs.loop();
+            if (!m.isTimeDilated) mobs.loop();
             if (m.fieldMode !== 7) m.hold();
             b.bulletRemove();
-            if (!m.isBodiesAsleep) b.bulletDo();
+            if (!m.isTimeDilated) b.bulletDo();
             simulation.runEphemera();
         }
         simulation.isTimeSkipping = false;
@@ -145,7 +223,7 @@ const simulation = {
     //     mobs.draw();
     //     simulation.draw.cons();
     //     simulation.draw.body();
-    //     if (!m.isBodiesAsleep) {
+    //     if (!m.isTimeDilated) {
     //         // mobs.loop();
     //     }
     //     mobs.healthBar();
@@ -157,7 +235,7 @@ const simulation = {
     //     b.fire();
     //     b.bulletRemove();
     //     b.bulletDraw();
-    //     if (!m.isBodiesAsleep) b.bulletDo();
+    //     if (!m.isTimeDilated) b.bulletDo();
     //     simulation.drawCircle();
     //     // simulation.clip();
     //     ctx.restore();
@@ -192,10 +270,11 @@ const simulation = {
     levelsCleared: 0,
     difficultyMode: 2, //normal difficulty is 2
     difficulty: 0,
-    dmgScale: null, //set in levels.setDifficulty
+    constraint: 0,
+    dmgScale: null,
     healScale: 1,
-    accelScale: null, //set in levels.setDifficulty
-    CDScale: null, //set in levels.setDifficulty
+    accelScale: null,
+    CDScale: null,
     molecularMode: Math.floor(4 * Math.random()), //0 spores, 1 missile, 2 ice IX, 3 drones //randomize molecular assembler field type
     // dropFPS(cap = 40, time = 15) {
     //   simulation.fpsCap = cap
@@ -346,7 +425,7 @@ const simulation = {
             if (simulation.drawList[i].time) {
                 simulation.drawList[i].time--;
             } else {
-                if (!m.isBodiesAsleep) simulation.drawList.splice(i, 1); //remove when timer runs out
+                if (!m.isTimeDilated) simulation.drawList.splice(i, 1); //remove when timer runs out
             }
         }
     },
@@ -417,16 +496,33 @@ const simulation = {
         }
         simulation.boldActiveGunHUD();
     },
+    // updateTechHUD() {
+    //     let text = ""
+    //     for (let i = 0, len = tech.tech.length; i < len; i++) { //add tech
+    //         if (tech.tech[i].isLost) {
+    //             if (text) text += "<br>" //add a new line, but not on the first line
+    //             text += `<span style="text-decoration: line-through;">${tech.tech[i].name}</span>`
+    //         } else if (tech.tech[i].count > 0 && !tech.tech[i].isInstant) {
+    //             if (text) text += "<br>" //add a new line, but not on the first line
+    //             text += `<span id = "${tech.tech[i].name}">${tech.tech[i].name}${tech.tech[i].count > 1 ? ` (${tech.tech[i].count}x)` : ""}</span>`
+
+    //             // document.getElementById(tech.tech[i].name).style.fontWeight = 'bold';
+    //             // simulation.ephemera.push({
+    //             //     name: "bold",
+    //             //     count: 180,
+    //             //     do() {
+    //             //         this.count--
+    //             //         if (this.count < 0) {
+    //             //             simulation.removeEphemera(this.name)
+    //             //             if (document.getElementById(tech.tech[i].name)) document.getElementById(tech.tech[i].name).style.fontWeight = 'normal';
+    //             //         }
+    //             //     }
+    //             // })
+    //         }
+    //     }
+    //     document.getElementById("right-HUD").innerHTML = text
+    // },
     updateTechHUD() {
-
-        // tech.tech.sort((a, b) => {
-        //     console.log(a.cycle, b.cycle)
-        //     if (a.cycle === undefined && b.cycle !== undefined) return -1;
-        //     if (a.cycle !== undefined && b.cycle === undefined) return 1;
-        //     if (a.cycle === undefined && b.cycle === undefined) return 0;
-        //     if (a.cycle !== b.cycle) return a.cycle - b.cycle;
-        // });
-
         let text = ""
         for (let i = 0, len = tech.tech.length; i < len; i++) { //add tech
             if (tech.tech[i].isLost) {
@@ -435,22 +531,14 @@ const simulation = {
             } else if (tech.tech[i].count > 0 && !tech.tech[i].isInstant) {
                 if (text) text += "<br>" //add a new line, but not on the first line
                 text += tech.tech[i].name
-                // if (tech.tech[i].nameInfo) {
-                //     text += tech.tech[i].nameInfo
-                //     tech.tech[i].addNameInfo();
-                // }
                 if (tech.tech[i].count > 1) text += ` (${tech.tech[i].count}x)`
             }
         }
-        document.getElementById("tech").innerHTML = text
+        document.getElementById("right-HUD").innerHTML = text
     },
     lastLogTime: 0,
     isTextLogOpen: true,
-    // <!-- <path d="M832.41,106.64 V323.55 H651.57 V256.64 c0-82.5,67.5-150,150-150 Z" fill="#789" stroke="none" />
-    // <path d="M827,112 h30 a140,140,0,0,1,140,140 v68 h-167 z" fill="#7ce" stroke="none" /> -->
-    // SVGleftMouse: '<svg viewBox="750 0 200 765" class="mouse-icon" width="40px" height = "60px" stroke-linecap="round" stroke-linejoin="round" stroke-width="25px" stroke="#000" fill="none">  <path fill="#fff" stroke="none" d="M827,112 h30 a140,140,0,0,1,140,140 v268 a140,140,0,0,1-140,140 h-60 a140,140,0,0,1-140-140v-268 a140,140,0,0,1,140-140h60" />  <path d="M832.41,106.64 V323.55 H651.57 V256.64 c0-82.5,67.5-150,150-150 Z" fill="#149" stroke="none" />  <path fill="none" d="M827,112 h30 a140,140,0,0,1,140,140 v268 a140,140,0,0,1-140,140 h-60 a140,140,0,0,1-140-140v-268 a140,140,0,0,1,140-140h60" />  <path d="M657 317 h 340 h-170 v-207" />  <ellipse fill="#fff" cx="827.57" cy="218.64" rx="29" ry="68" />  </svg>',
-    // SVGrightMouse: '<svg viewBox="750 0 200 765" class="mouse-icon" width="40px" height = "60px" stroke-linecap="round" stroke-linejoin="round" stroke-width="25px" stroke="#000" fill="none">  <path fill="#fff" stroke="none" d="M827,112 h30 a140,140,0,0,1,140,140 v268 a140,140,0,0,1-140,140 h-60 a140,140,0,0,1-140-140v-268 a140,140,0,0,1,140-140h60" />  <path d="M827,112 h30 a140,140,0,0,1,140,140 v68 h-167 z" fill="#0cf" stroke="none" />  <path fill="none" d="M827,112 h30 a140,140,0,0,1,140,140 v268 a140,140,0,0,1-140,140 h-60 a140,140,0,0,1-140-140v-268 a140,140,0,0,1,140-140h60" />  <path d="M657 317 h 340 h-170 v-207" />  <ellipse fill="#fff" cx="827.57" cy="218.64" rx="29" ry="68" />  </svg>',
-    makeTextLog(text, time = 240) {
+    inGameConsole(text, time = 240) {
         if (!localSettings.isHideHUD && simulation.isTextLogOpen && !build.isExperimentSelection) {
             if (simulation.lastLogTime > m.cycle) { //if there is an older message
                 document.getElementById("text-log").innerHTML = document.getElementById("text-log").innerHTML + '<br>' + text;
@@ -470,14 +558,14 @@ const simulation = {
         }
     },
     nextGun() {
-        if (b.inventory.length > 1 && !tech.isGunCycle) {
+        if (b.inventory.length > 1 && !(tech.isGunCycle || tech.isGunChoice)) {
             b.inventoryGun++;
             if (b.inventoryGun > b.inventory.length - 1) b.inventoryGun = 0;
             simulation.switchGun();
         }
     },
     previousGun() {
-        if (b.inventory.length > 1 && !tech.isGunCycle) {
+        if (b.inventory.length > 1 && !(tech.isGunCycle || tech.isGunChoice)) {
             b.inventoryGun--;
             if (b.inventoryGun < 0) b.inventoryGun = b.inventory.length - 1;
             simulation.switchGun();
@@ -559,7 +647,98 @@ const simulation = {
             })
         }
     },
-    translatePlayerAndCamera(where) {
+    isInvertedVertical: false,
+    flipCameraVertical(frames = 1, passFunction = () => { }) {
+        if (!simulation.isInvertedVertical) {
+            if (frames > 0) {
+                let count = 0
+                const loop = () => {
+                    if (m.alive) {
+                        if (simulation.paused) {
+                            requestAnimationFrame(loop);
+                        } else {
+                            count++
+                            ctx.setTransform(1, 0, 0, 1, 0, 0); ///reset to avoid build up of transformations
+                            if (count === frames) {
+                                // Flip the canvas vertically
+                                ctx.translate(0, canvas.height); // Move the origin down to the bottom
+                                ctx.scale(1, -1); // Flip vertically
+                                simulation.isInvertedVertical = true
+                                //flip mouse Y again to make sure it caught
+                                mouseMove = function (e) {
+                                    simulation.mouse.x = e.clientX;
+                                    simulation.mouse.y = window.innerHeight - e.clientY;
+                                }
+                            } else {
+                                requestAnimationFrame(loop);
+                                ctx.translate(0, canvas.height * count / frames);
+                                ctx.scale(1, 1 - 2 * count / frames);
+                            }
+                            if (count === Math.floor(frames / 2)) {
+                                //flip mouse Y at the 1/2 way point
+                                mouseMove = function (e) {
+                                    simulation.mouse.x = e.clientX;
+                                    simulation.mouse.y = window.innerHeight - e.clientY;
+                                }
+                                //passFunction probably flips the map elements 
+                                passFunction()
+                            }
+                        }
+                    }
+                }
+                requestAnimationFrame(loop);
+            } else {
+                // Flip the canvas vertically
+                ctx.translate(0, canvas.height); // Move the origin down to the bottom
+                ctx.scale(1, -1); // Flip vertically
+                //flip mouse Y
+                simulation.isInvertedVertical = true
+                mouseMove = function (e) {
+                    simulation.mouse.x = e.clientX;
+                    simulation.mouse.y = window.innerHeight - e.clientY;
+                }
+            }
+        }
+    },
+    unFlipCameraVertical(frames = 0, passFunction = () => { }) {
+        if (frames) {
+            let count = 0
+            const loop = () => {
+                if (m.alive) {
+                    if (simulation.paused) {
+                        requestAnimationFrame(loop);
+                    } else {
+                        count++
+                        ctx.setTransform(1, 0, 0, 1, 0, 0); ///reset to avoid build up of transformations
+                        if (count === frames) {
+                            // requestAnimationFrame(() => { ctx.reset(); });
+                            // ctx.translate(0, 0);
+                            // ctx.scale(1, 1);
+                            simulation.isInvertedVertical = false
+                            //flip mouse Y again to make sure it caught
+                            mouseMove = mouseMoveDefault
+
+                        } else {
+                            requestAnimationFrame(loop);
+                            ctx.translate(0, canvas.height - canvas.height * count / frames);
+                            ctx.scale(1, -1 + 2 * count / frames);
+                        }
+                        if (count === Math.floor(frames / 2)) {
+                            mouseMove = mouseMoveDefault//flip mouse Y at the 1/2 way point
+                            passFunction()//passFunction probably draws new map elements 
+                        }
+                    }
+                }
+            }
+            requestAnimationFrame(loop);
+        } else {
+            ctx.reset();
+            ctx.font = "25px Arial";
+            simulation.isInvertedVertical = false
+            mouseMove = mouseMoveDefault
+        }
+    },
+    translatePlayerAndCamera(where, isTranslateBots = true) {
         //infinite falling.  teleport to sky after falling
         const before = { x: player.position.x, y: player.position.y, }
         Matter.Body.setPosition(player, { x: where.x, y: where.y });
@@ -569,25 +748,27 @@ const simulation = {
         m.transY += change.y
         simulation.mouseInGame.x = (simulation.mouse.x - canvas.width2) / simulation.zoom * simulation.edgeZoomOutSmooth + canvas.width2 - m.transX;
         simulation.mouseInGame.y = (simulation.mouse.y - canvas.height2) / simulation.zoom * simulation.edgeZoomOutSmooth + canvas.height2 - m.transY;
+
         m.angle = Math.atan2(simulation.mouseInGame.y - m.pos.y, simulation.mouseInGame.x - m.pos.x);
 
         //is there a reason to update m.pos here?
         // m.pos.x = player.position.x;
         // m.pos.y = playerBody.position.y - m.yOff;
-
-        for (let i = 0; i < bullet.length; i++) {
-            if (bullet[i].botType) {
-                if (Vector.magnitudeSquared(Vector.sub(bullet[i].position, player.position)) > 1000000) { //far away bots teleport to player
-                    Matter.Body.setPosition(bullet[i], Vector.add(player.position, { x: 250 * (Math.random() - 0.5), y: 250 * (Math.random() - 0.5) }));
-                    Matter.Body.setVelocity(bullet[i], { x: 0, y: 0 });
-                } else { //close bots maintain relative distance to player on teleport
-                    Matter.Body.setPosition(bullet[i], Vector.sub(bullet[i].position, change));
+        if (isTranslateBots) {
+            for (let i = 0; i < bullet.length; i++) {
+                if (bullet[i].botType) {
+                    if (Vector.magnitudeSquared(Vector.sub(bullet[i].position, player.position)) > 1000000) { //far away bots teleport to player
+                        Matter.Body.setPosition(bullet[i], Vector.add(player.position, { x: 250 * (Math.random() - 0.5), y: 250 * (Math.random() - 0.5) }));
+                        Matter.Body.setVelocity(bullet[i], { x: 0, y: 0 });
+                    } else { //close bots maintain relative distance to player on teleport
+                        Matter.Body.setPosition(bullet[i], Vector.sub(bullet[i].position, change));
+                    }
                 }
             }
         }
     },
     setupCamera() { //makes the camera not scroll after changing locations
-        // //only works if velocity is zero
+        // only works if velocity is zero
         m.pos.x = player.position.x;
         m.pos.y = playerBody.position.y - m.yOff;
         const scale = 0.8;
@@ -613,6 +794,20 @@ const simulation = {
         simulation.mouseInGame.x = (simulation.mouse.x - canvas.width2) / simulation.zoom * simulation.edgeZoomOutSmooth + canvas.width2 - m.transX;
         simulation.mouseInGame.y = (simulation.mouse.y - canvas.height2) / simulation.zoom * simulation.edgeZoomOutSmooth + canvas.height2 - m.transY;
     },
+    //for moving camera away from player
+    setCameraPosition(x, y, zoom = 1) {
+        ctx.restore();
+        ctx.save();
+        ctx.translate(canvas.width2, canvas.height2); //center
+        ctx.scale(zoom, zoom); //zoom in once centered
+        ctx.translate(- x, - y); //center
+
+        // ctx.scale(simulation.zoom / simulation.edgeZoomOutSmooth, simulation.zoom / simulation.edgeZoomOutSmooth); //zoom in once centered
+        // ctx.translate(-canvas.width2, -canvas.height2); //translate
+        //calculate in game mouse position by undoing the zoom and translations
+        simulation.mouseInGame.x = (simulation.mouse.x - canvas.width2) / simulation.zoom * simulation.edgeZoomOutSmooth + canvas.width2 - m.transX;
+        simulation.mouseInGame.y = (simulation.mouse.y - canvas.height2) / simulation.zoom * simulation.edgeZoomOutSmooth + canvas.height2 - m.transY;
+    },
     cameraNoLook() {
         ctx.save();
         ctx.translate(canvas.width2, canvas.height2); //center
@@ -625,8 +820,8 @@ const simulation = {
     restoreCamera() {
         ctx.restore();
     },
-    trails() {
-        const swapPeriod = 150
+    trails(swapPeriod = 150) {
+        // const swapPeriod = 150
         const len = 30
         for (let i = 0; i < len; i++) {
             setTimeout(function () {
@@ -682,7 +877,7 @@ const simulation = {
                 bodies[i].force.y += bodies[i].mass * magnitude;
             }
         }
-        if (!m.isBodiesAsleep) {
+        if (!m.isTimeDilated) {
             addGravity(powerUp, simulation.g);
             addGravity(body, simulation.g);
         }
@@ -710,6 +905,8 @@ const simulation = {
         document.getElementById("experiment-button").style.opacity = "0";
         document.getElementById("training-button").style.display = "inline"
         document.getElementById("training-button").style.opacity = "0";
+        document.getElementById("start-button").style.display = "inline"
+        document.getElementById("start-button").style.opacity = "0";
         document.getElementById("experiment-grid").style.display = "none"
         document.getElementById("pause-grid-left").style.display = "none"
         document.getElementById("pause-grid-right").style.display = "none"
@@ -723,6 +920,7 @@ const simulation = {
         setTimeout(() => {
             document.getElementById("experiment-button").style.opacity = "1";
             document.getElementById("training-button").style.opacity = "1";
+            document.getElementById("start-button").style.opacity = "1";
             document.getElementById("info").style.opacity = "1";
             document.getElementById("splash").style.opacity = "1";
         }, 200);
@@ -749,6 +947,7 @@ const simulation = {
         document.getElementById("info").style.display = "none";
         document.getElementById("experiment-button").style.display = "none";
         document.getElementById("training-button").style.display = "none";
+        document.getElementById("start-button").style.display = "none";
         // document.getElementById("experiment-button").style.opacity = "0";
         document.getElementById("splash").onclick = null; //removes the onclick effect so the function only runs once
         document.getElementById("splash").style.display = "none"; //hides the element that spawned the function
@@ -756,11 +955,11 @@ const simulation = {
         document.getElementById("health").style.display = "inline"
         document.getElementById("health-bg").style.display = "inline";
         if (!localSettings.isHideHUD) {
-            document.getElementById("tech").style.display = "inline"
+            document.getElementById("right-HUD").style.display = "inline"
             document.getElementById("defense-bar").style.display = "inline"
             document.getElementById("damage-bar").style.display = "inline"
         } else {
-            document.getElementById("tech").style.display = "none"
+            document.getElementById("right-HUD").style.display = "none"
             document.getElementById("defense-bar").style.display = "none"
             document.getElementById("damage-bar").style.display = "none"
         }
@@ -774,6 +973,8 @@ const simulation = {
         document.getElementById("pause-grid-left").style.opacity = "1"
         ctx.globalCompositeOperation = "source-over"
         ctx.shadowBlur = 0;
+
+        mouseMove = mouseMoveDefault
         requestAnimationFrame(() => {
             ctx.setTransform(1, 0, 0, 1, 0, 0); //reset warp effect
             ctx.setLineDash([]) //reset stroke dash effect
@@ -786,13 +987,13 @@ const simulation = {
         } else {
             Composite.add(engine.world, [player])
         }
+        seededShuffle(level.constraint)
         level.populateLevels()
-
         input.endKeySensing();
         simulation.ephemera = []
-        tech.setupAllTech(); //sets tech to default values
+        powerUps.powerUpStorage = []
+        tech.resetAllTech(); //sets tech to default values
         b.resetAllGuns();
-        tech.duplication = 0;
         for (i = 0, len = b.guns.length; i < len; i++) { //find which gun 
             if (b.guns[i].name === "laser") b.guns[i].chooseFireMethod()
             if (b.guns[i].name === "nail gun") b.guns[i].chooseFireMethod()
@@ -800,20 +1001,12 @@ const simulation = {
             if (b.guns[i].name === "harpoon") b.guns[i].chooseFireMethod()
             if (b.guns[i].name === "foam") b.guns[i].chooseFireMethod()
         }
-        tech.dynamoBotCount = 0;
-        tech.nailBotCount = 0;
-        tech.laserBotCount = 0;
-        tech.orbitBotCount = 0;
-        tech.foamBotCount = 0;
-        tech.soundBotCount = 0;
-        tech.boomBotCount = 0;
-        tech.plasmaBotCount = 0;
-        tech.missileBotCount = 0;
+        b.zeroBotCount()
 
+        m.isSwitchingWorlds = false
         simulation.isChoosing = false;
         b.setFireMethod()
         b.setFireCD();
-        // simulation.updateTechHUD();
         for (let i = 0; i < b.guns.length; i++) b.guns[i].isRecentlyShown = false //reset recently shown back to zero
         for (let i = 0; i < m.fieldUpgrades.length; i++) m.fieldUpgrades[i].isRecentlyShown = false //reset recently shown back to zero
         for (let i = 0; i < tech.tech.length; i++) tech.tech[i].isRecentlyShown = false //reset recently shown back to zero
@@ -826,73 +1019,48 @@ const simulation = {
         powerUps.boost.endCycle = 0
         powerUps.isFieldSpawned = false
         m.setFillColors();
-        // m.maxHealth = 1
-        // m.maxEnergy = 1
-        // m.energy = 1
         input.isPauseKeyReady = true
         simulation.wipe = function () { //set wipe to normal
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
+        m.lastHit = 0
         m.hole.isOn = false
         simulation.paused = false;
-        // simulation.cycle = 0
-        // m.cycle = 0
         engine.timing.timeScale = 1;
         simulation.fpsCap = simulation.fpsCapDefault;
         simulation.isAutoZoom = true;
         simulation.makeGunHUD();
         simulation.lastLogTime = 0;
         mobs.mobDeaths = 0
-
+        level.isFlipped = false
         level.onLevel = 0;
         level.levelsCleared = 0;
-        //resetting difficulty
-        // simulation.difficulty = 0;
-        level.setDifficulty()
-        simulation.difficultyMode = Number(document.getElementById("difficulty-select").value)
+        level.updateDifficulty()
+        // level.setConstraints()
 
         simulation.clearNow = true;
         document.getElementById("text-log").style.display = "none"
         document.getElementById("fade-out").style.opacity = 0;
         document.title = "n-gon";
-        // simulation.makeTextLog(`input.key.up<span class='color-symbol'>:</span> ["<span class='color-text'>${input.key.up}</span>", "<span class='color-text'>ArrowUp</span>"]`);
-        // simulation.makeTextLog(`input.key.left<span class='color-symbol'>:</span> ["<span class='color-text'>${input.key.left}</span>", "<span class='color-text'>ArrowLeft</span>"]`);
-        // simulation.makeTextLog(`input.key.down<span class='color-symbol'>:</span> ["<span class='color-text'>${input.key.down}</span>", "<span class='color-text'>ArrowDown</span>"]`);
-        // simulation.makeTextLog(`input.key.right<span class='color-symbol'>:</span> ["<span class='color-text'>${input.key.right}</span>", "<span class='color-text'>ArrowRight</span>"]`);
-        simulation.makeTextLog(`Math.seed <span class='color-symbol'>=</span> ${Math.initialSeed}`);
-        simulation.makeTextLog(`<span class='color-var'>const</span> engine <span class='color-symbol'>=</span> Engine.create(); <em>//simulation begin</em>`);
-        simulation.makeTextLog(`engine.timing.timeScale <span class='color-symbol'>=</span> 1`);
-        // simulation.makeTextLog(`input.key.field<span class='color-symbol'>:</span> ["<span class='color-text'>${input.key.field}</span>", "<span class='color-text'>MouseRight</span>"]`);
-
-        // document.getElementById("health").style.display = "inline"
-        // document.getElementById("health-bg").style.display = "inline"
+        simulation.inGameConsole(`Math.seed <span class='color-symbol'>=</span> ${Math.initialSeed}`);
+        simulation.inGameConsole(`<span class='color-var'>const</span> engine <span class='color-symbol'>=</span> Engine.create(); <em>//simulation begin</em>`);
+        simulation.inGameConsole(`engine.timing.timeScale <span class='color-symbol'>=</span> 1`);
         m.alive = true;
+        m.definePlayerMass();
         m.onGround = false
         m.lastOnGroundCycle = 0
         m.health = 0;
+        level.isLowHeal = false
         m.addHealth(0.25)
         m.drop();
         m.holdingTarget = null
 
         //set to default field
         tech.healMaxEnergyBonus = 0
-        // m.setMaxEnergy();
         m.energy = 0
         m.immuneCycle = 0;
-        // simulation.makeTextLog(`${simulation.SVGrightMouse}<strong style='font-size:30px;'> ${m.fieldUpgrades[m.fieldMode].name}</strong><br><span class='faded'></span><br>${m.fieldUpgrades[m.fieldMode].description}`, 600);
-        // simulation.makeTextLog(`
-        // input.key.up <span class='color-symbol'>=</span> ["<span class='color-text'>${input.key.up}</span>", "<span class='color-text'>ArrowUp</span>"]
-        // <br>input.key.left <span class='color-symbol'>=</span> ["<span class='color-text'>${input.key.left}</span>", "<span class='color-text'>ArrowLeft</span>"]
-        // <br>input.key.down <span class='color-symbol'>=</span> ["<span class='color-text'>${input.key.down}</span>", "<span class='color-text'>ArrowDown</span>"]
-        // <br>input.key.right <span class='color-symbol'>=</span> ["<span class='color-text'>${input.key.right}</span>", "<span class='color-text'>ArrowRight</span>"]
-        // <br>
-        // <br><span class='color-var'>m</span>.fieldMode <span class='color-symbol'>=</span> "<span class='color-text'>${m.fieldUpgrades[m.fieldMode].name}</span>"
-        // <br>input.key.field <span class='color-symbol'>=</span> ["<span class='color-text'>${input.key.field}</span>", "<span class='color-text'>right mouse</span>"]
-        // <br><span class='color-var'>m</span>.field.description <span class='color-symbol'>=</span> "<span class='color-text'>${m.fieldUpgrades[m.fieldMode].description}</span>"
-        // `, 800);
         m.coupling = 0
         m.setField(0) //this calls m.couplingChange(), which sets max health and max energy
-        // m.energy = 0;
         //exit testing
         if (simulation.testing) {
             simulation.testing = false;
@@ -911,12 +1079,12 @@ const simulation = {
             simulation.ephemera.push({
                 name: "dmgDefBars", count: 0, do() {
                     if (!(m.cycle % 15)) { //4 times a second
-                        const defense = m.defense()             //update defense bar
+                        const defense = m.defense() //* simulation.dmgScale           //update defense bar
                         if (m.lastCalculatedDefense !== defense) {
                             document.getElementById("defense-bar").style.width = Math.floor(300 * m.maxHealth * (1 - defense)) + "px";
                             m.lastCalculatedDefense = defense
                         }
-                        const damage = tech.damageFromTech()             //update damage bar
+                        const damage = tech.damageFromTech() //* m.dmgScale           //update damage bar
                         if (m.lastCalculatedDamage !== damage) {
                             document.getElementById("damage-bar").style.height = Math.floor((Math.atan(0.25 * damage - 0.25) + 0.25) * 0.53 * canvas.height) + "px";
                             m.lastCalculatedDamage = damage
@@ -975,7 +1143,7 @@ const simulation = {
                                 },
                             })
                             const before = { x: player.position.x, y: player.position.y, }
-                            let posXClamped = Math.min(Math.max(level.fallModeBounds.left, player.position.x), level.fallModeBounds.right)
+                            const posXClamped = Math.min(Math.max(level.fallModeBounds.left, player.position.x), level.fallModeBounds.right)
                             Matter.Body.setPosition(player, { x: posXClamped, y: level.enter.y - 4000 });
 
                             // translate camera smoothly to preserve illusion to endless fall
@@ -993,8 +1161,6 @@ const simulation = {
                         } else { //get hurt and go to start
                             Matter.Body.setVelocity(player, { x: 0, y: 0 });
                             Matter.Body.setPosition(player, { x: level.enter.x + 50, y: level.enter.y - 20 });
-                            // m.damage(0.02 * simulation.difficultyMode);
-                            // m.energy -= 0.02 * simulation.difficultyMode
                             // move bots
                             for (let i = 0; i < bullet.length; i++) {
                                 if (bullet[i].botType) {
@@ -1012,7 +1178,7 @@ const simulation = {
                     if (isNaN(player.position.x)) m.death();
                     if (m.lastKillCycle + 300 > m.cycle) { //effects active for 5 seconds after killing a mob
                         if (tech.isEnergyRecovery && m.immuneCycle < m.cycle) {
-                            m.energy += m.maxEnergy * 0.05
+                            m.energy += m.maxEnergy * 0.05 * level.isReducedRegen
                             simulation.drawList.push({ //add dmg to draw queue
                                 x: m.pos.x,
                                 y: m.pos.y - 45,
@@ -1024,7 +1190,7 @@ const simulation = {
                         if (tech.isHealthRecovery) {
                             if (tech.isEnergyHealth) {
                                 if (m.immuneCycle < m.cycle) {
-                                    m.energy += m.maxEnergy * 0.005
+                                    m.energy += m.maxEnergy * 0.005 * level.isReducedRegen
                                     simulation.drawList.push({ //add dmg to draw queue
                                         x: m.pos.x,
                                         y: m.pos.y,
@@ -1069,7 +1235,6 @@ const simulation = {
                                 },
                             })
                         }
-
                         if (tech.isZeno) {
                             if (tech.isEnergyHealth) {
                                 m.energy *= 0.95
@@ -1081,28 +1246,41 @@ const simulation = {
                         }
                         if (tech.cyclicImmunity && m.immuneCycle < m.cycle + tech.cyclicImmunity) m.immuneCycle = m.cycle + tech.cyclicImmunity; //player is immune to damage for 60 cycles
 
-                        fallCheck = function (who, save = false) {
-                            let i = who.length;
-                            while (i--) {
-                                if (who[i].position.y > simulation.fallHeight) {
-                                    if (save) {
-                                        Matter.Body.setVelocity(who[i], { x: 0, y: 0 });
-                                        Matter.Body.setPosition(who[i], {
-                                            x: level.exit.x + 30 * (Math.random() - 0.5),
-                                            y: level.exit.y + 30 * (Math.random() - 0.5)
-                                        });
-                                    } else {
-                                        Matter.Composite.remove(engine.world, who[i]);
-                                        who.splice(i, 1);
-                                    }
+
+
+                        let i = body.length;
+                        while (i--) {
+                            if (body[i].position.y > simulation.fallHeight) {
+                                Matter.Composite.remove(engine.world, body[i]);
+                                body.splice(i, 1);
+                            }
+                        }
+                        i = powerUp.length
+                        while (i--) {
+                            if (powerUp[i].position.y > simulation.fallHeight) {
+                                Matter.Body.setVelocity(powerUp[i], { x: 0, y: 0 });
+                                if (level.fallMode === "position") {
+                                    const posXClamped = Math.min(Math.max(level.fallModeBounds.left, powerUp[i].position.x), level.fallModeBounds.right)
+                                    Matter.Body.setPosition(powerUp[i], { x: posXClamped, y: level.enter.y - 3000 });
+                                } else {
+                                    Matter.Body.setPosition(powerUp[i], {
+                                        x: level.exit.x + 30 * (Math.random() - 0.5),
+                                        y: level.exit.y + 30 * (Math.random() - 0.5)
+                                    });
                                 }
                             }
-                        };
-                        fallCheck(body);
-                        fallCheck(powerUp, true);
-                        let i = mob.length;
+                        }
+                        i = mob.length;
                         while (i--) {
-                            if (mob[i].position.y > simulation.fallHeight) mob[i].death();
+                            if (mob[i].position.y > simulation.fallHeight) {
+                                if (mob[i].isBoss && level.fallMode === "position") {
+                                    Matter.Body.setVelocity(mob[i], { x: 0, y: 0 });
+                                    const posXClamped = Math.min(Math.max(level.fallModeBounds.left, mob[i].position.x), level.fallModeBounds.right)
+                                    Matter.Body.setPosition(mob[i], { x: posXClamped, y: level.enter.y - 3000 });
+                                } else {
+                                    mob[i].death();
+                                }
+                            }
                         }
 
                     }
@@ -1123,8 +1301,10 @@ const simulation = {
     },
     clearNow: false,
     clearMap() {
+        level.isVerticalFLipLevel = false
         level.isProcedural = false;
         level.fallMode = "";
+        simulation.unFlipCameraVertical()
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         if (m.alive) {
             if (tech.isLongitudinal) b.guns[3].waves = []; //empty array of wave bullets
@@ -1142,15 +1322,6 @@ const simulation = {
                 if (tech.ammoCap) b.guns[10].ammo = Math.min(tech.ammoCap, b.guns[10].ammo)
                 simulation.updateGunHUD();
             }
-
-            // for (i = 0, len = b.guns.length; i < len; i++) { //find which gun is mine
-            //     if (b.guns[i].name === "mine") {
-            //         b.guns[i].ammo += count
-            //         if (tech.ammoCap) b.guns[i].ammo = Math.min(tech.ammoCap, b.guns[i].ammo)
-            //         simulation.updateGunHUD();
-            //         break;
-            //     }
-            // }
 
             if (tech.isMutualism && !tech.isEnergyHealth) {
                 for (let i = 0; i < bullet.length; i++) {
@@ -1196,6 +1367,7 @@ const simulation = {
         m.drop();
         m.hole.isOn = false;
         simulation.drawList = [];
+        mobs.maxMobBody = 40
 
         if (tech.isHealAttract && m.alive) { //send health power ups to the next level
             let healCount = 0
@@ -1235,7 +1407,7 @@ const simulation = {
             }
 
             //respawn drones in animation frame
-            requestAnimationFrame(() => { b.delayDrones({ x: level.enter.x + 50, y: level.enter.y - 60 }, droneCount) });
+            requestAnimationFrame(() => { b.delayDrones({ x: level.enter.x + 50, y: level.enter.y - 60 }, droneCount, deliveryCount) });
 
             //respawn spores in animation frame
             let respawnSpores = () => {
@@ -1304,7 +1476,7 @@ const simulation = {
             for (let i = 0, len = mob.length; i < len; i++) {
                 if (mob[i].isDropPowerUp && mob[i].alive) count++
             }
-            count *= 0.25 //to fake the 25% chance, this makes it not random, and more predictable
+            count *= 0.3 //to fake the 25% chance, this makes it not random, and more predictable
             let cycle = () => { //run after waiting a cycle for the map to be cleared
                 const types = ["heal", "ammo", "heal", "ammo", "research", "coupling", "boost", "tech", "gun", "field"]
                 for (let i = 0; i < count; i++) powerUps.spawnDelay(types[Math.floor(Math.random() * types.length)], 1)
@@ -1902,6 +2074,7 @@ const simulation = {
     },
     enableConstructMode() {
         level.isProcedural = false //this is set to be true in levels like labs that need x+ and y+ in front of positions
+        level.isVerticalFLipLevel = false
         simulation.isConstructionMode = true;
         simulation.isHorizontalFlipped = false;
         simulation.isAutoZoom = false;
@@ -1928,8 +2101,17 @@ const simulation = {
                     simulation.outputMapString(`${Math.floor(simulation.constructMouseDownPosition.x)}, ${Math.floor(simulation.constructMouseDownPosition.y)}`);
                 } else if (simulation.mouseInGame.x > simulation.constructMouseDownPosition.x && simulation.mouseInGame.y > simulation.constructMouseDownPosition.y) { //make sure that the width and height are positive
                     if (e.button === 0) { //add map
+                        // if (level.isProcedural) {
+                        //     simulation.outputMapString(`spawn.mapRect(x+${x}, ${y}, ${dx}, ${dy});\n`);
+                        // } else {
+                        //     simulation.outputMapString(`spawn.mapRect(${x}, ${y}, ${dx}, ${dy});\n`);
+                        // }
                         if (level.isProcedural) {
                             simulation.outputMapString(`spawn.mapRect(x+${x}, ${y}, ${dx}, ${dy});\n`);
+                        } else if (level.isVerticalFLipLevel) {
+                            console.log('hi')
+                            simulation.outputMapString(`spawn.mapRect(${x}, ${y}, ${dx}, ${dy});\n`);
+                            simulation.outputMapString(`//spawn.mapRect(${x}, ${-y - dy}, ${dx}, ${dy});\n`);
                         } else {
                             simulation.outputMapString(`spawn.mapRect(${x}, ${y}, ${dx}, ${dy});\n`);
                         }
@@ -1963,6 +2145,17 @@ const simulation = {
                 simulation.constructMouseDownPosition.y = simulation.mouseInGame.y
             }
         });
+
+        document.body.addEventListener("wheel", (e) => {
+            if (e.deltaY > 0) {
+                simulation.setZoom(simulation.zoomScale / 0.9)
+            } else {
+                simulation.setZoom(simulation.zoomScale * 0.9)
+            }
+        });
+
+
+
 
         //undo last element added after you press z
         document.body.addEventListener("keydown", (event) => { // e.keyCode   z=90  m=77 b=66  shift = 16  c = 67

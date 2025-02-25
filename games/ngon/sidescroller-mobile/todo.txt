@@ -1,96 +1,165 @@
 ******************************************************** NEXT PATCH **************************************************
 
-tech: anyon - 2x energy after duplicating a power up, +6% duplication chance
-tech: Abelian group - 4x damage while invulnerable
-tech: fermion - become invulnerable for 5 seconds after a mob dies
-tech: entropic gravity - crouching pulls MACHO towards the player, and 1.5x to all MACHO effects (damage, damage reduction, AoE damage)
-tech: modified Newtonian dynamics - +20 speed for all Newtonian law tech
+plasma ball resets instantly after exploding
+  reduced damage by 8%
+  increase cost to fire 4->5 energy
 
-choice, MACHO, invulnerable, speed - have text keyword CSS style
-removed chance to find a random tech in early levels from mobs
-  this reduces tech per full game by about 2
-tower level has a few changes
-options exchange only works once per level, but it gives 3x choices after randomizing
-dark star has a 1.2->1.3x MACHO radius
-autocannon fires 1->2 extra super balls, but balls have higher gravity
-grappling hook field starts with 0.6x damage reduction
-super balls + uncertainty principle makes all balls start in the same spot and only separate after teleporting
-ablative drones spawns 50% more drones on collision
-von Neumann probe gives 40% more drones per block mass
-  also added text clarification that it uses 5 energy
-tech lens rotates 50% faster
-ghoster mobs are more aggressive once they have lost 20% health
-sneakBoss doesn't start accelerating until it is partly uncloaked, but it spawns sneaker mobs after cloaking
 
-fixed bug with 2 different boost power up sizes
-paradigm shift doesn't do damage while player is invulnerable
-random internet JUNK images disabled because some of the images are bad
-entanglement bug fix, maybe
+******************************************************** BUGS ********************************************************
 
-******************************************************* DESIGN ******************************************************
-
-priorities
-  synergies between tech
-    difficult to achieve synergies that feel so powerful they are game breaking / changing
-  randomized content adds repeatability
-    bosses, mobs, levels, tech
-  graphical indicators of tech effects and quantity
-  subtle lore woven into unexpected places
-
-add more randomize sub level map content
-  left/right sides of lock
-  small lab rooms
-
-powerful synergies
-  CPT + high energy regen
-  research + bot fabrication + ersatz bots + various bot upgrades
-  harpoon + high fire rate + alternator + time dilation
-  duplication 100%
-  interest + coupling, research + (peer review? or Bayesian statistics)
-  electronegativity and high energy?
-    electronegativity + anyon + duplication + Maxwells demon + interest
-  chain reaction + invulnerable + Abelian group + parasitism = clear all mobs on level
+graphical bug - player can become crouched while not touching the ground if they exit the ground while crouched
 
 *********************************************************** TODO *****************************************************
 
-make each difficulty level have specific listed changes
-  to motivate people to try that difficulty to see the difference
-  make difficulty easier to see
-    in pause menu
-    before game begins
-  automatically increase difficulty when player wins?
-  difficulty based changes (maybe in the order)
-    more bosses
-    more mobs
-    mobs attack faster
-    mobs move faster
-    reduced heals
-    reduced damage done
-    increased damage taken
-    mobs regen health
-    -1 choice for tech, field, gun
-    no starting power ups (heal, research)
-    starting JUNK chance?
+apply plasma jet to plasma ball?
+  increase range of electrical arc?
+    this is the same as corona discharge
 
-bug Newton's 1st law image not showing up on github server
-  shows up on n-gon, and landgreen  github, but webp file isn't loading onto server?
-  try name change,
-  wait and see if next patch fixes it
+wormhole fieldtech:   - gain 1% duplication for this level each time the wormhole eats a block
+  add a limit to the number of blocks that can be duplicated?
+  can this be exploited to not be fun?
+  how many blocks are on an average level?
+
+tech - rip in spacetime - using wormhole leaves behind a zone of radiation, like neutron bomb  ( grenadeNeutron )
+  make a new bullet type for rip() in spacetime so you can use it for several things
+  rips()
+    lasts 2-10 seconds?
+    damages mobs and player
+    slows things caught inside?
+    black circle with randomly changing radius and sparkles inside the black circle
+      white stroke (maybe with dotted lines like laser)
+
+tech - benefit if you haven't killed any mobs on this level
+  have to clean up mobs that die on level spawn from falling blocks 
+tech - benefit in the first 20 seconds of the level
+
+mob - moves around, but then stops and makes porcupine spikes for 2 seconds, then moves again.
+  maybe use hopper movement?
+
+soft body boss?
+  search    softBody(x, y, angle = 0, isAttached = true, len = 15, radius = 20, stiffness = 1, damping = 1) {
+
+use ←↑→↓↖↗↘↙ combos to allow fields to have special actions
+  how to limit spam?
+     on cooldown
+      timer or once per level
+     energy cost
+     research cost
+     toggle modes
+  combos are listed in white text in field description, and console message when getting field
+    shows up on highlight, and mouse over in experiment mode
+  field ideas:
+    standing wave
+      push mobs away are any distance
+      pull mobs towards you
+    perfect diamagnetism
+    negative mass
+    molecular assembler - done
+    plasma torch
+      move around like you have recoil, move kinda fast so it's hard to control
+        like form recoil but fast
+    time dilation
+    metamaterial cloaking
+    pilot wave - done
+    wormhole
+      toggle bullets entering with wormholes
+        and player??
+      shoot out all the blocks that were sucked in this level (maybe cap at like 10?, cap with energy spent to fire)
+        are block sizes stored properly?  because they shrink before they get eaten...
+          store vertices on the body object if one does already exists
+          after eating store the saved vertices
+        where to fire blocks from and in what direction?
+          target mobs?
+          fire from player (and draw a wormhole looking graphic)
+    grappling hook
+
+new level idea: large map sized blocks that can't be destroyed that the player walks on as a part of the level
+  eventually the blocks fall
+    after fall level progresses to a phase 2 to clean up the blocks or leave them
+    should bosses be killed by falling blocks??
+  how to avoid the large block vibrating/dancing on tiny block issue
+
+new level idea:  escort mission
+  player has to stay near something that moves slowly through the level
+    maybe only a zone around the escort is safe
+      safe from?
+        lasers
+        slime
+        radiation
+    use line of site vision?
+    is it going to feel too slow?
+    where to put in level order?
+      random option instead of reactor?
+      normal level?
+      4th hard level?
+        already too many hard options
+          you could put in 2 hard levels in the level list
+    make the style look like substructure, that level looks great
+      use the motion sense lasers
+
+  
+tech:  - remove the research costs of all tech
+  there's about 15 tech with a research cost
+!!conformal - similar rules for small and big scales  linked to holographic principle
+!!holonomy - parallel transport of a vector leads to movement (applies to curved space)
+  when far away from your wormhole regenerate 1% of your max energy per second
+  when far away from your wormhole reduce damage taken
+  heal last hit damage after enter wormhole
+!!quasar - plasma torch from both ends of wormhole
+  only after wormhole eats a block fire?
+    or just increase plasma length after eating block?
+
+procedural animation 
+  https://www.youtube.com/watch?v=qlfh_rv6khY
+
+tech: ice-VII - 1.5x duration for ice-IX
+tech:  - freezing grenades/explosions
+tech:  - when you get a bot, get a second bot
+tech:  - after killing a Boss
+  heal to full
+  gain 3x damage for the rest of the level
+
+new level - rework testChamber
+
+Boss (or mob) that quickly moves towards player, but then moves perpendicularly to player, like dodging
+  could respond to when player presses fire key or to when it takes damage
+
+new snakeBoss type that eats mobs
+  each time it eats:
+    heal?
+      get shield if full?
+    make boss longer (if snake)
+    get shield
+    get orbitals
+    spawn spawns (little red square mobs)
+  when boss dies
+    spawn eaten mobs?
+    spawn generic mobs?
+    nothing
+  make snake new colors, width
 
 Boss mob - takes a snapshot of the positions of all mobs, player, blocks, power ups.  Then 3 seconds later it teleports everything back to those spots.
   after snap shot is stored draw outline of body positions for a second to show the change
   immune after snapshot?   or  immune after teleport?
+Boss mob - records the position of mobs every few cycles
+  makes a ghost copy of the mob that is delayed by a few seconds
+    ghost can damage player, but doesn't have a matter.js object
+  gives mobs short snake tails, like snakeBoss
+  brings 1 mob back to life every few seconds
 
-flip player upside down
-  how 
-    rotate player in matter.js
-      make sure floor sensor works
-    flip player crouch direction
-    redraw legs, orb
-    flip gravity
-  when to use?
-    fieldTech: negative mass?
-    effect in level
+tech: atomic pile - lose 1 health if you are above the maximum energy
+  generate energy for each nearby mob?
+  do damage?
+  plasma torch tech?
+
+make player mass an adjustable var in the skin
+  does this mess with jump height or air control?
+increase mass and movement speed at the same time
+  increase jump differently because it scales extra with mass
+    m.defaultMass = 4.5
+    m.definePlayerMass()
+  possible player.mass bad interactions
+    grapple
 
 tech - after a power up is duplicated
   update text to random effect after choosing tech, or after each trigger, or on first display of tech
@@ -99,13 +168,7 @@ tech - after a power up is duplicated
     summon JUNK bots for 10 seconds
     2x current energy
     gain 1.01x damage permanently
-  cool name: 
-
-field tech: negative mass - quickly pull/teleport in all nearby blocks and then fire them away from player
-  how does player triggers effect?
-    picking up a block pulls in all nearby blocks, throwing block fires all nearby blocks
-    taking damage
-  auto aim 50% of blocks at mobs
+  cool name:
 
 after picking up heals gain ____
   0.1x damage taken for 12s
@@ -117,51 +180,12 @@ after picking up research gain ____
 tech: Energy generation increases with you velocity
   Newtons' 3rd law?
 
-after clicking on a new tech (or getting it in any way) animate adding the tech to your collection
-  fade in on right side text list?
-
 tech - getting caught in an explosion gives you _____
   damage for 10 seconds?
   heals
 
-tech - limit total number of tech to like 10?
-
-tech - destroying blocks gives _____
-
-removeJunkTechFromPool doesn't seem to remove the correct amount
-
-wormholes that end inside wall check to see if the space before the wall is safe and end there instead
-  can use laser code
-
-tech:  - (1 + 0.01)x for each tech, gun, field you've picked up
-  scales with born rule, duplication, remove tech
-
 explosions have a chance to spawn spores
   infinite feedback loop with spores that explode?
-
-make sure healing isn't effected by simulation.healScale
-  instead heal orb size should be scaled
-    but the ratio between size and heal shouldn't be effected
-
-tech - destroys a random tech each new level and gains +damage each time
-
-boss - tracks the position, velocity, angle of power ups, blocks, and bullets it fires
-  reactor only?
-  will rewind time
-    after damage threshold?
-  does it track player bullets? 
-
-button/switch input ideas from Cocoon game
-  pick up blocks that have a rubber band attached to a sliding switch
-    as player moves the vector direction of the rubber band will move the slider left or right
-    use this to open doors, move larger blocks, ...
-  switches that toggle left, right when player presses input.field while standing nearby
-    replace laser off on switch?
-    platform that rises up when player presses input.field while standing
-  How to instruct player to use field on these?
-    color with field #0ff
-    draw field effect
-    make it still functional without the field button
 
 tech - getting a new gun also gives you 2 random tech for that gun
   or a field?
@@ -185,6 +209,31 @@ improve new player experience
 -40% foam ammo gain
 When foam is in an explosion it also explodes with size proportional to the size of the foam bubble
 Requires foam, explosion source, not aerogel
+
+new level similar to ash tray maze
+  !!not sure how this works with theme (most levels are locations that have industrial stuff)
+  this might work as another line of sight level?
+    could be fine without line of sight if rooms don't exist until they open up?
+  where to put in game sequence?
+  watch a run through   https://www.youtube.com/watch?v=nudSXUMBEV4
+    close off doors as player gets close
+    open up doors as player gets close
+    holes in the floor
+    slide large walls back to open up levels below
+    show a zone, then close it off, but eventually reveal it later
+    rise up pillars during combat
+    small maze rooms, 1-2 really huge rooms, long corridors, medium combat rooms
+  triggers for changes
+    clearing mobs in a zone
+      or time based if player is too slow
+    player gets close to a zone
+  make map elements shift around as player moves through the game
+    start with map elements filling everywhere and slow open up new zones
+  need a cool way to animate adding and removing map elements
+    maybe for the entire level redraw the map every 15 cycles?
+      simulation.draw.setPaths() //update map graphics
+    slide map around
+    small map squares that each add in sequentially
 
 Cosmological natural selection:  do something with black holes
   spawn black hole mobs
@@ -308,16 +357,6 @@ make a lemming that walks until it hits a wall and then turns around robotically
   body or mob?
   can't be killed?
 
-use ephemera to replace some bad code
-  JUNK?
-  request animation stuff
-  simulation checks
-    damage and defense bars
-      disable and enable ephemera with settings
-
-perfect diamagnatism - invulnerable while field is active?
-  also drain energy while field is active?
-
 mobs attack mines
   mines periodically set all mobs to have player location to be the mine
     is this going to work with all mob vision types?
@@ -331,23 +370,8 @@ Tech: relativity
 wormhole tech - teleport away mobs with mass below 3 when they get too near the player
     short CD, small energy cost, only mobs below a mass
 
-extend brainstorming animation timers to fps cap?
-  will it be smoother or choppier?
-  anything else needs to hit limited fps on a high fps monitor?
-
-perfect diamagnatism could bounce on mobs, or even map elements?
-  could work like a rocket jump?
-
 tech: Bose Einstein condensate - freezes enemies in pilot wave, and drains some energy?
-
-make super balls with Zectron deflectable with field
-  but is there a simple way to do this?
-
-set mob health bar colors based on status effects?
-  make mob damage immunity a mob status effect?
   
-tech: rail gun area damage effect, but for all harpoon mode
-
 mob status effect - vulnerability
   mobs take 4x damage for __ time
     afterwards mobs go back to normal damage taken
@@ -475,7 +499,7 @@ add small SVG pics to in-game console
   when?
     one for each field?
   use stuff on physics notes:
-simulation.makeTextLog(`
+simulation.inGameConsole(`
 <svg class="SVG-title" width="160" height="120">
     <g fill="transparent" stroke="#333" stroke-width="1" transform="translate(78,75)" stroke-linecap="round">
         <path d="M-34 -34 l31 31 m6 6 l31 31    M34 -34 l-31 31 m-6 6 l-31 31"></path>
@@ -796,11 +820,6 @@ intro map: diegeticly draw a mouse with field highlighted
   also indicate space?
   dynamically adjust drawing after picking up a gun 
 
-increase mass and movement speed at the same time
-  increase jump differently because it scales extra with mass
-    m.defaultMass = 4.5
-    m.definePlayerMass()
-
 give history boss legs?
 
 field tech - disable blocking, but does high damage to mobs inside field
@@ -811,9 +830,6 @@ mob/boss that fires a laser at player, but give player time to avoid
   they target where player was 1 second ago
   they turn to face player?
 
-tech rocket jump - jumping produces an explosion at your feet that lets you jump extra high, but does some damage
-  require electric reactive armor?
-
 Plasma Burner: upgrade for plasma torch, basically just a jet engine. does high damage, but short range, mostly for player movement.
   maybe reduce gravity to really low then apply a vector away from mouse direction
 
@@ -822,17 +838,6 @@ auto-gon - auto battler with n-gon mob AI and tech
     they fight other mobs and bosses
   similar research and tech system to n-gon
   some mobs can fire player weapons
-
-tech: relativistic jets:
-  small particles that shot out from front and back poles and end up in a wide variety of spirals
-    slow trickle when charging and several more when firing
-  
-Tech: Make player smol
-
-adapt the cloaking graphics to make a flashlight cone visual effect
-  put code in level.do?
-
-be nice if block throwing had a projected path
 
 Pilot wave tech
   Energy use is increased, but you can now shape blocks using pressure
@@ -986,77 +991,6 @@ n-gon outreach ideas
   hacker news - show hacker news post
   twitch - lets play
 
-******************************************************** BUGS ********************************************************
-
-bug: maybe I can put in an event listener to reset inputs to false when you tab out to prevent key sticking
-
-bug - url sharing still broken sometimes
-    
-tech upgrade to anthropic principle to make it trigger at 50% life and 0% once per map
-
-bug? cloaking field doesn't show energy over max
-
-run more profiles of n-gon to fix performance issues
-
-bug - death while paused crashes game?
-
-bug:  possibly clearing away all bullets causes a problem
-  bullet.js 255  (.do() is missing)
-  I died and quantum immortality triggered (I had needles and ice-IX)
-  game crashed but recovered
-
-vanish element bug, crashes on touching element,  happens for 1 person maybe with junk tech?
-
-safari issues
-  once: can't pick up blocks
-    fixed on new map
-    cloaking field
-  once: after damage, locked into slow time mode
-    fixed on damage
-  3 times player head graphics not rotating
-    left/right leg flip broke
-    walk leg direction,  legs are walking backwards
-    happened maybe after power up selection menu??
-    cloaking field(at least once)
-    aiming still works
-    fixed on new map, although flip still broken (is flip a separate issue?)
-      flip fixed on new game
-
-sharing builds as html doesn't work for long lists...
-  it shouldn't be sharing undefined at all
-  probably some other problems too
-  (this might be fixed...)
-
-blocks on buttons teleport into the button endlessly if they are being slowly floated away
-  maybe add a cooldown?
-  can't reproduce
-
-ants marching outline doesn't sync right on safari anymore.
-
-door to exit in level: vats does nothing
-  did I do that?
-
-death while in power up selection menu doesn't reset properly
-  of course it's not possible to die in this menu unless you use testing and shift+X
-
-player can become crouched while not touching the ground if they exit the ground while crouched
-
-a couple times people have reported the final boss dropping extra bodies on death
-
-blue triangle boss can move backwards and aim away from you if set up properly
-  issues with dot product probably, but might not be worth fixing
-
-mouse event e.which is deprecated
-
-fix door.isClosing actually meaning isClosed?
-
-make it so that when you are immune to harm you can either jump on mobs or you pass through them
-
-is there a way to check if the player is stuck inside the map or block
-  trigger a short term non-collide if that occurs
-
-(intermittent, but almost every time) bug - capping the fps causes random slow downs, that can be fixed with pause
-
 ******************************************************** LEVELS ********************************************************
 
 map: observatory
@@ -1204,73 +1138,6 @@ add sounds
     // tone(445.50)
     // tone(495)
 
-
-******************************************************** LORE ********************************************************
-
-look up sci-fi science ideas here  https://projectrho.com/public_html/rocket/
-
-possible names for tech
-  sidereal - with respect to the stars  (an extra rotation for time keeping)
-  holonomy -  parallel transport of a vector leads to movement (applies to curved space)
-  holographic - 2-D surface can predict the 3-D space behind it?  I think
-  entropic gravity - gravity is emergent in a holographic way
-    (maybe a field tech for negative mass)
-  conformal - similar rules for small and big scales  linked to holographic principle
-  hypergolic - A hypergolic propellant combination used in a rocket engine is one whose components spontaneously ignite when they come into contact with each other.
-  swarm intelligence - for a drone tech
-  metaheuristic - is a higher-level procedure or heuristic designed to find, generate, or select a heuristic (partial search algorithm) that may provide a sufficiently good solution to an optimization problem, especially with incomplete or imperfect information or limited computation capacity
-  stochastic optimization
-  electrostatic discharge
-  Gödel's incompleteness
-  quantum zeno effect  (perturbation of a system prevents some systems from evolving because it scrambles coherence)  (apply to lasers, fields)
-  counterfactual - something false
-  regression to the mean
-  phlogiston theory is a superseded scientific theory that postulated the existence of a fire-like element called phlogiston
-  Laplace's demon was a notable published articulation of causal determinism on a scientific basis by Pierre-Simon Laplace in 1814.[1] According to determinism, if someone (the demon) knows the precise location and momentum of every atom in the universe, their past and future values for any given time are entailed; they can be calculated from the laws of classical mechanics.
-  evolutionary cosmology
-  eternal inflation
-  hypergraph
-  SQUID (for superconducting quantum interference device) is a very sensitive magnetometer used to measure extremely subtle magnetic fields, based on superconducting loops containing Josephson junctions.
-  Josephson junction - superconducting junction used in SQUIDS and quantum computers
-  nuclear pasta - hard matter in neutron star
-  nonlocal, nonlocality:  maybe use for pilot wave 
-  fine-tuned universe
-  nonperturbative
-  D-branes
-  instanton or pseudoparticle
-  soliton  (wave packet)
-  hall effect thrusters
-  spaghettification
-  particle accelerator
-  superluminal signalling
-  NP-complete
-  lenticular lens:  is an array of lenses, designed so that when viewed from slightly different angles, different parts of the image underneath are shown.
-  p-hacking JUNK tech
-  https://en.wikipedia.org/wiki/High-entropy_alloys  high yield strength and low ductility, high temp resistance
-  https://en.wikipedia.org/wiki/Refractory_metals  hard, high temp resistance
-  https://en.wikipedia.org/wiki/Upper-atmospheric_lightning#Elves
-  prion quine - self replicating protein
-  Unitarity - https://en.wikipedia.org/wiki/Unitarity_(physics) - all probabilities add up to 1, calculations work the same forward and backwards in time
-    this is violated by expansion of the universe
-  https://en.wikipedia.org/wiki/Cosmic_censorship_hypothesis - black holes can't leak
-  Alcubierre warp drive (FTL with negative mass)
-  Spherules - A spherule is a small sphere or spherical body. It can also refer to a thick-walled spherical structure that contains endospores and occurs in the parasitic form of fungi
-  negative entropy
-  memetics
-  magnetorquers - produce spin by pushing on earth's magnetic field
-  Josephson junction - superconducting junction
-  Pyroelectricity - voltage from temp changes - upgrade from piezoelectricity 
-  Unruh effect - accelerating makes heat/thermal particles
-  configuration space - holds the position of everything
-  stress–energy tensor
-  radioisotope thermoelectric generator - 
-  retrovirus: these things make JUNK DNA so link it somehow to that tech?
-    Upon infection with a retrovirus, a cell converts the retroviral RNA into DNA and sometimes the DNA will be passed on to progeny as JUNK DNA
-  amalgam, amalgamation - the action, process, or result of combining or uniting. 
-  thermoplastic - the stuff in 3-D printers, use for molecular assembler tech
-  ergosphere - region of a spinning black hole that might allow FTL or alternate realities.
-  equivalence principle - gravity and acceleration are the same
-
 ******************************************************** IMAGES ********************************************************
 
 process:  discord midjourney prompts -> "pixelmator pro" adjust color, repair, scale to 384x256, export PNG -> webP? -> place in /img folder
@@ -1338,5 +1205,109 @@ if pause is pressed while selecting power ups, display pause menu on top of sele
   boost, coupling power ups tech - cyan electron orbiting a black nucleus electric field as bas-relief   //(by Kazumasa Nagai)
   radioactive - volumetric atomic nucleus diagram by Paul Catherall
 
+******************************************************** LORE ********************************************************
 
+look up sci-fi science ideas here  https://projectrho.com/public_html/rocket/
 
+possible names for tech
+  sidereal - with respect to the stars  (an extra rotation for time keeping)
+  entropic gravity - gravity is emergent in a holographic way
+    (maybe a field tech for negative mass)
+  hypergolic - A hypergolic propellant combination used in a rocket engine is one whose components spontaneously ignite when they come into contact with each other.
+  swarm intelligence - for a drone tech
+  metaheuristic - is a higher-level procedure or heuristic designed to find, generate, or select a heuristic (partial search algorithm) that may provide a sufficiently good solution to an optimization problem, especially with incomplete or imperfect information or limited computation capacity
+  stochastic optimization
+  electrostatic discharge
+  Gödel's incompleteness
+  quantum zeno effect  (perturbation of a system prevents some systems from evolving because it scrambles coherence)  (apply to lasers, fields)
+  counterfactual - something false
+  regression to the mean
+  phlogiston theory is a superseded scientific theory that postulated the existence of a fire-like element called phlogiston
+  Laplace's demon was a notable published articulation of causal determinism on a scientific basis by Pierre-Simon Laplace in 1814.[1] According to determinism, if someone (the demon) knows the precise location and momentum of every atom in the universe, their past and future values for any given time are entailed; they can be calculated from the laws of classical mechanics.
+  evolutionary cosmology
+  eternal inflation
+  hypergraph
+  SQUID (for superconducting quantum interference device) is a very sensitive magnetometer used to measure extremely subtle magnetic fields, based on superconducting loops containing Josephson junctions.
+  Josephson junction - superconducting junction used in SQUIDS and quantum computers
+  nuclear pasta - hard matter in neutron star
+  spaghettification
+  fine-tuned universe
+  nonperturbative
+  D-branes
+  instanton or pseudoparticle
+  soliton  (wave packet)
+  hall effect thrusters
+  particle accelerator
+  superluminal signalling
+  NP-complete
+  lenticular lens:  is an array of lenses, designed so that when viewed from slightly different angles, different parts of the image underneath are shown.
+  p-hacking JUNK tech
+  https://en.wikipedia.org/wiki/High-entropy_alloys  high yield strength and low ductility, high temp resistance
+  https://en.wikipedia.org/wiki/Refractory_metals  hard, high temp resistance
+  https://en.wikipedia.org/wiki/Upper-atmospheric_lightning#Elves
+  prion quine - self replicating protein
+  Unitarity - https://en.wikipedia.org/wiki/Unitarity_(physics) - all probabilities add up to 1, calculations work the same forward and backwards in time
+    this is violated by expansion of the universe
+  https://en.wikipedia.org/wiki/Cosmic_censorship_hypothesis - black holes can't leak
+  Alcubierre warp drive (FTL with negative mass)
+  Spherules - A spherule is a small sphere or spherical body. It can also refer to a thick-walled spherical structure that contains endospores and occurs in the parasitic form of fungi
+  negative entropy
+  memetics
+  magnetorquers - produce spin by pushing on earth's magnetic field
+  Josephson junction - superconducting junction
+  Pyroelectricity - voltage from temp changes - upgrade from piezoelectricity 
+  Unruh effect - accelerating makes heat/thermal particles
+  configuration space - holds the position of everything (related to fermions/bosons and particle interactions)
+  stress–energy tensor
+  radioisotope thermoelectric generator - 
+  retrovirus: these things make JUNK DNA so link it somehow to that tech?
+    Upon infection with a retrovirus, a cell converts the retroviral RNA into DNA and sometimes the DNA will be passed on to progeny as JUNK DNA
+  amalgam, amalgamation - the action, process, or result of combining or uniting. 
+  thermoplastic - the stuff in 3-D printers, use for molecular assembler tech
+  ergosphere - region of a spinning black hole that might allow FTL or alternate realities.
+  Casimir effect - attractive force between two close conductive plates
+  difference engine - early calculator/computer
+  cyanoacrylate - superglue use for a slowing effect?
+  superposition - something with waves overlapping
+  math terms - integral, derivative, Laplace transform, inflection point
+  quasicrystals - something with low friction, maybe defense?
+  Coalescence - things merging together like clouds.  maybe mergin power ups?
+  trihydrogen cation - common molecule in space, dark matter tech?
+  superradiance - laser tech
+  cryocoolers - freezing effects
+  metaphysics - maybe this changes something deep and universal about physics?  not sure
+  cork - used as a heat shield for rockets
+  P = NP - something with speeding up calculation times
+  transistivity - something where a>b and b>c ->  a>c
+  lenticular - looks different from different angles (lasers?, cloaking?)
+    every few seconds pick a random skin tech?
+  De Sitter space - simple model of universe related to general relativity (mass-energy?)
+  active optics - something with lasers?  maybe something with diffuse beam getting smaller
+  Quintessence - related to dark energy
+  biofilm - something defensive?  related to spores?
+  Thermogalvanic - makes things cold, for no energy
+  Intron - noncoding DNA that separates regions of coding DNA,  use for JUNK tech
+
+******************************************************* DESIGN ******************************************************
+
+priorities    
+  synergies between tech
+    difficult to achieve synergies that feel so powerful they are game breaking / changing
+  randomized content that adds repeatability
+    bosses, mobs, levels, tech
+  graphical indicators of tech effects and quantity
+  subtle lore woven into unexpected places
+
+add more randomize sub level map content
+  left/right sides of lock
+  small lab rooms
+
+list of powerful synergies
+  CPT + high energy regen
+  research + bot fabrication + ersatz bots + various bot upgrades
+  harpoon + high fire rate + alternator + time dilation
+  duplication 100%
+  interest + coupling, research + (peer review? or Bayesian statistics)
+  electronegativity and high energy?
+    electronegativity + anyon + duplication + Maxwells demon + interest + pair production
+  chain reaction + invulnerable + Abelian group + parasitism = clear all mobs on level
